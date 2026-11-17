@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한국 입양 통계 대시보드 | Korea Adoption Statistics</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+    --dom:#2563eb; --intl:#f97316; --male:#3b82f6; --female:#ec4899; --accent:#111827;
+    --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 24px 64px}
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+  h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px;margin:0}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#111827;color:#fff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600}
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{font-size:12px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+  .kpi{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px}
+  .kpi .l{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+  .kpi .v{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:6px 0 4px}
+  .kpi .d{font-size:12px;color:var(--muted)}
+  .kpi .d.up{color:#16a34a}.kpi .d.down{color:#dc2626}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px 12px;margin-bottom:16px;min-width:0}
+  .card.full{grid-column:1/-1}
+  .card h2{font-size:16px;font-weight:700;margin:0 0 2px;letter-spacing:-.01em}
+  .card .desc{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+  .card .src{font-size:11px;color:#9ca3af;margin-top:6px}
+  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .seg{display:inline-flex;background:#f3f4f6;border-radius:10px;padding:3px;gap:2px}
+  .seg button{border:0;background:transparent;padding:6px 10px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
+  .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .plot{width:100%;height:340px}
+  .plot.tall{height:400px}
+  .plot.short{height:300px}
+  table.rank{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+  table.rank th{font-weight:600;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);font-size:12px}
+  table.rank td{padding:7px 4px;border-bottom:1px solid #f3f4f6}
+  table.rank td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .bar{height:6px;border-radius:3px;background:#e5e7eb;position:relative}
+  .bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--intl)}
+  .insight{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 20px}
+  .insight div{background:#fff;border-left:3px solid var(--dom);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.5;box-shadow:var(--shadow)}
+  .insight div b{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px}
+  footer{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
+  footer h3{font-size:13px;color:var(--ink);margin:0 0 4px}
+  footer ul{margin:0 0 12px;padding-left:18px}
+  @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.insight{grid-template-columns:1fr}.card.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>한국 입양 통계 대시보드</h1>
+      <p class="sub">국내·국외 입양 아동 현황 2001~2025 · 기준: 연내 법원 입양허가(인용판결) 완료 아동 수 · 단위: 명</p>
+      <div class="chips">
+        <span class="chip">KOSIS 보건복지부 「가정위탁국내입양현황」 DT_11770N001</span>
+        <span class="chip">공공데이터포털 15127995</span>
+        <span class="chip">보건복지부 입양의 날 보도자료 2020~2026</span>
+      </div>
+    </div>
+    <div class="badge"><span class="dot"></span> 데이터 기준 2025년 · KOSIS 갱신 2026-08-21</div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+  <div class="insight" id="insight"></div>
+
+  <div class="grid">
+    <div class="card full">
+      <div class="row">
+        <div><h2>연도별 국내·국외 입양 추이</h2><p class="desc">막대: 입양 아동 수 · 선: 국내입양 비중. 2012년 입양특례법 개정(법원 허가제) 이후 급감, 2025년 7월 공적 입양체계 전환.</p></div>
+        <div class="seg" id="segTrend"><button data-v="abs" class="on">인원</button><button data-v="share">비중 100%</button></div>
+      </div>
+      <div id="trend" class="plot tall"></div>
+      <div class="src">출처: KOSIS DT_11770N001 (보건복지부), e-나라지표 2708</div>
+    </div>
+
+    <div class="card">
+      <h2>국내입양 성별</h2><p class="desc">2010~2025. 국내입양은 여아 비중이 높은 편이나 2024년 이후 균형에 가까워짐.</p>
+      <div id="sexDom" class="plot"></div>
+      <div class="src">출처: 공공데이터포털 보건복지부_입양 아동 현황(2010~2024), 복지부 보도자료(2025)</div>
+    </div>
+    <div class="card">
+      <h2>국외입양 성별</h2><p class="desc">2010~2025. 국외입양은 남아 비중이 압도적 (2025년 87.5%).</p>
+      <div id="sexIntl" class="plot"></div>
+      <div class="src">출처: 공공데이터포털 15127995, 복지부 보도자료</div>
+    </div>
+
+    <div class="card full">
+      <h2>성비 추이: 국내는 여아, 국외는 남아</h2><p class="desc">국내입양 여아 비중 vs 국외입양 남아 비중 (2010~2025)</p>
+      <div id="sexRatio" class="plot short"></div>
+    </div>
+
+    <div class="card full">
+      <div class="row">
+        <div><h2>국외입양 수용국별 현황</h2><p class="desc">2017~2024 연도별 수용국 분포. 2025년(24명)의 국가별 분포는 미공개.</p></div>
+        <div class="seg" id="segCountry"></div>
+      </div>
+      <div class="grid" style="gap:12px">
+        <div><div id="countryStack" class="plot"></div></div>
+        <div>
+          <div id="countryDonut" class="plot" style="height:230px"></div>
+          <table class="rank" id="countryTable"></table>
+        </div>
+      </div>
+      <div class="src">출처: 보건복지부 입양의 날 보도자료 (2020.5, 2023.5, 2024.5, 2025.5) 붙임 통계</div>
+    </div>
+
+    <div class="card">
+      <h2>입양아동 연령대 · 국내</h2><p class="desc">2023~2025. 1세 미만·1~2세가 대부분이나 2025년 6세 이상도 9명.</p>
+      <div id="ageDom" class="plot short"></div>
+      <div class="src">출처: 복지부 2026.5 보도자료 붙임5</div>
+    </div>
+    <div class="card">
+      <h2>입양아동 연령대 · 국외</h2><p class="desc">2023~2025. 1~2세 아동에 집중 (75~81%). 1세 미만은 거의 없음.</p>
+      <div id="ageIntl" class="plot short"></div>
+      <div class="src">출처: 복지부 2026.5 보도자료 붙임5</div>
+    </div>
+
+    <div class="card full">
+      <h2>입양아동 발생 사유</h2><p class="desc">2022~2025. 미혼모·부 아동이 대부분, 2025년 '기타'에 보호출산 포함되며 증가.</p>
+      <div id="reason" class="plot short"></div>
+      <div class="src">출처: 복지부 2025.5 / 2026.5 보도자료</div>
+    </div>
+  </div>
+
+  <footer>
+    <h3>데이터 출처 및 갱신</h3>
+    <ul>
+      <li><b>연도별 국내/국외 입양</b>: KOSIS OpenAPI <code>statisticsParameterData.do?orgId=117&amp;tblId=DT_11770N001&amp;objL1=ALL&amp;itmId=A02&amp;prdSe=Y</code> (매년 5~8월 갱신). 2001~2015는 e-나라지표(idx_cd=2708) 동일 출처.</li>
+      <li><b>성별</b>: 공공데이터포털 「보건복지부_입양 아동 현황」 CSV/API (2010~2024, 매년 5월 말 갱신) + 2025는 복지부 보도자료.</li>
+      <li><b>수용국별·연령별·발생사유</b>: 보건복지부 「입양의 날」 보도자료 붙임 통계 (매년 5월 11일 전후 발표). API 없음, 수기 갱신.</li>
+    </ul>
+    <h3>유의사항</h3>
+    <ul>
+      <li>국내입양아동 수는 국내 입양기관을 통한 법원 허가 건수 기준이며, 배우자의 친생자 입양(재혼가정 등)은 포함되지 않습니다.</li>
+      <li>2013년 국외입양 급감(755→236)은 2012.8 입양특례법 시행에 따른 법원 허가 절차 도입 과도기 영향입니다.</li>
+      <li>누계(250,540명)는 1958년 이후 보건복지부 집계 기준입니다.</li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+// ------------------------------------------------------------------ DATA
+const D = {
+  years: [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],
+  dom:   [1770,1694,1564,1641,1461,1332,1388,1306,1314,1462,1548,1125,686,637,683,546,465,378,387,260,226,182,150,154,116],
+  intl:  [2436,2365,2287,2258,2101,1899,1264,1250,1125,1013,916,755,236,535,374,334,398,303,317,232,189,142,79,58,24],
+  cumulative: 250540, cumulativeIntl: 168588,
+  sex: [ // year, dom_m, dom_f, intl_m, intl_f
+    [2010,479,983,675,338],[2011,482,1066,629,287],[2012,410,715,590,165],[2013,203,483,194,42],
+    [2014,223,414,438,97],[2015,222,461,287,87],[2016,191,355,269,65],[2017,150,315,302,96],
+    [2018,110,268,221,82],[2019,125,262,233,84],[2020,90,170,192,40],[2021,78,148,133,56],
+    [2022,67,115,92,50],[2023,61,89,53,26],[2024,76,78,42,16],[2025,52,64,21,3]
+  ],
+  countries: ["미국","캐나다","스웨덴","호주","노르웨이","이탈리아","덴마크","프랑스","룩셈부르크","영국","독일"],
+  country: { // year -> counts aligned with countries
+    2017:[274,28,25,24,20,11,6,5,5,0,0], 2018:[188,22,28,14,19,12,7,7,5,0,1], 2019:[232,23,13,10,12,15,3,5,3,1,0],
+    2020:[156,19,18,17,7,9,3,2,1,0,0],   2021:[126,17,14,11,7,7,3,1,3,0,0],   2022:[99,10,9,2,6,4,5,4,3,0,0],
+    2023:[48,10,8,3,4,5,0,0,1,0,0],      2024:[41,4,3,5,3,2,0,0,0,0,0]
+  },
+  ageBands: ["1세 미만","1~2세","2~3세","3~4세","4~6세","6~12세","12세 이상"],
+  ageDom:  {2023:[75,48,10,8,8,1,0], 2024:[70,67,5,5,3,4,0], 2025:[33,57,8,3,6,7,2]},
+  ageIntl: {2023:[0,64,12,0,3,0,0],  2024:[1,47,8,1,1,0,0],  2025:[0,18,5,1,0,0,0]},
+  reasonLabels: ["미혼모·부 아동(혼외자 포함)","유기아동","기타(보호출산 포함)"],
+  reason: {2022:[279,42,3], 2023:[167,54,8], 2024:[172,35,5], 2025:[90,29,21]}
+};
+const C = {dom:'#2563eb', intl:'#f97316', male:'#3b82f6', female:'#ec4899',
+  pal:['#1d4ed8','#f97316','#0ea5e9','#22c55e','#a855f7','#eab308','#ef4444','#14b8a6','#64748b','#94a3b8','#cbd5e1']};
+const fmt = n => n.toLocaleString('ko-KR');
+const pct = (a,b,d=1) => (100*a/b).toFixed(d)+'%';
+const base = {font:{family:'Pretendard, -apple-system, sans-serif', size:12, color:'#374151'}, paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  margin:{l:48,r:16,t:8,b:36}, legend:{orientation:'h', y:1.12, x:0, font:{size:12}, traceorder:'normal'}, hovermode:'x unified',
+  xaxis:{gridcolor:'#f3f4f6', zeroline:false, tickfont:{size:11}}, yaxis:{gridcolor:'#eef0f3', zeroline:false, tickfont:{size:11}}};
+const cfg = {displayModeBar:false, responsive:true};
+const L = o => Object.assign({}, base, o, {xaxis:Object.assign({},base.xaxis,o.xaxis||{}), yaxis:Object.assign({},base.yaxis,o.yaxis||{})});
+
+// ------------------------------------------------------------------ KPIs
+(function(){
+  const n = D.years.length, y = D.years[n-1], tot = D.dom[n-1]+D.intl[n-1], prevTot = D.dom[n-2]+D.intl[n-2];
+  const first = D.dom[0]+D.intl[0];
+  const s = D.sex.at(-1);
+  const kp = [
+    {l:`${y}년 전체 입양`, v:fmt(tot)+'명', d:`${tot-prevTot>0?'+':''}${fmt(tot-prevTot)}명 (${pct(tot-prevTot,prevTot)}) vs ${y-1}`, cls: tot<prevTot?'down':'up'},
+    {l:`${y}년 국내입양`, v:fmt(D.dom[n-1])+'명', d:`전체의 ${pct(D.dom[n-1],tot)} · ${y-1}년 ${pct(D.dom[n-2],prevTot)}`},
+    {l:`${y}년 국외입양`, v:fmt(D.intl[n-1])+'명', d:`전체의 ${pct(D.intl[n-1],tot)} · 남아 ${pct(s[3],s[3]+s[4])}`},
+    {l:`2001년 대비 감소`, v:pct(first-tot,first,1), d:`${fmt(first)}명 → ${fmt(tot)}명`, cls:'down'},
+    {l:`1958년 이후 누계`, v:fmt(D.cumulative)+'명', d:`국외 ${fmt(D.cumulativeIntl)}명 (${pct(D.cumulativeIntl,D.cumulative)})`}
+  ];
+  document.getElementById('kpis').innerHTML = kp.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="d ${k.cls||''}">${k.d}</div></div>`).join('');
+  const c24 = D.country[2024], us = c24[0], t24 = c24.reduce((a,b)=>a+b,0);
+  const usAll = Object.values(D.country).reduce((a,r)=>a+r[0],0), allC = Object.values(D.country).flat().reduce((a,b)=>a+b,0);
+  document.getElementById('insight').innerHTML = [
+    ['국내입양 비중 역전', `2001년 국내 42% → 2025년 <b style="display:inline;color:#111">82.9%</b>. 국외입양은 2,436명에서 24명으로 99% 감소.`],
+    ['국외입양 수용국', `2017~2024 국외입양 ${fmt(allC)}명 중 미국 ${fmt(usAll)}명(${pct(usAll,allC,0)}). 2024년에는 미국 ${us}명(${pct(us,t24)}), 호주 5, 캐나다 4.`],
+    ['성별·연령 특징', `국외입양은 1~2세 남아 중심(2025년 남아 87.5%, 1~2세 75%). 국내입양은 1세 미만·1~2세가 78%.`]
+  ].map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('');
+})();
+
+// ------------------------------------------------------------------ Trend
+function drawTrend(mode){
+  const share = D.years.map((_,i)=>D.dom[i]/(D.dom[i]+D.intl[i]));
+  let traces, layout;
+  if(mode==='abs'){
+    traces = [
+      {type:'bar', name:'국내', x:D.years, y:D.dom, marker:{color:C.dom}, hovertemplate:'국내 %{y:,}명<extra></extra>'},
+      {type:'bar', name:'국외', x:D.years, y:D.intl, marker:{color:C.intl}, hovertemplate:'국외 %{y:,}명<extra></extra>'},
+      {type:'scatter', mode:'lines+markers', name:'국내 비중', x:D.years, y:share, yaxis:'y2', line:{color:'#111827', width:2}, marker:{size:5}, hovertemplate:'국내 비중 %{y:.1%}<extra></extra>'}
+    ];
+    layout = L({barmode:'stack', margin:{l:48,r:44,t:8,b:36}, yaxis:{title:{text:'명',font:{size:11}}}, yaxis2:{overlaying:'y', side:'right', tickformat:'.0%', range:[0,1], showgrid:false, tickfont:{size:11}},
+      shapes:[{type:'line',x0:2012.5,x1:2012.5,y0:0,y1:1,yref:'paper',line:{color:'#9ca3af',width:1,dash:'dot'}}],
+      annotations:[{x:2012.5,y:1,yref:'paper',text:'입양특례법 시행 (2012.8)',showarrow:false,xanchor:'left',yanchor:'top',font:{size:11,color:'#6b7280'},xshift:6}]});
+  } else {
+    traces = [
+      {type:'bar', name:'국내', x:D.years, y:share, marker:{color:C.dom}, hovertemplate:'국내 %{y:.1%}<extra></extra>'},
+      {type:'bar', name:'국외', x:D.years, y:share.map(s=>1-s), marker:{color:C.intl}, hovertemplate:'국외 %{y:.1%}<extra></extra>'}
+    ];
+    layout = L({barmode:'stack', yaxis:{tickformat:'.0%', range:[0,1]}});
+  }
+  Plotly.react('trend', traces, layout, cfg);
+}
+drawTrend('abs');
+document.getElementById('segTrend').addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON') return;
+  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on', b===e.target)); drawTrend(e.target.dataset.v); });
+
+// ------------------------------------------------------------------ Sex
+(function(){
+  const ys = D.sex.map(r=>r[0]);
+  const mk = (mi,fi,id) => Plotly.newPlot(id, [
+    {type:'bar', name:'남', x:ys, y:D.sex.map(r=>r[mi]), marker:{color:C.male}, hovertemplate:'남 %{y:,}명<extra></extra>'},
+    {type:'bar', name:'여', x:ys, y:D.sex.map(r=>r[fi]), marker:{color:C.female}, hovertemplate:'여 %{y:,}명<extra></extra>'}
+  ], L({barmode:'stack'}), cfg);
+  mk(1,2,'sexDom'); mk(3,4,'sexIntl');
+  Plotly.newPlot('sexRatio', [
+    {type:'scatter', mode:'lines+markers', name:'국내입양 여아 비중', x:ys, y:D.sex.map(r=>r[2]/(r[1]+r[2])), line:{color:C.female,width:2.5}, hovertemplate:'%{y:.1%}<extra>국내 여아</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'국외입양 남아 비중', x:ys, y:D.sex.map(r=>r[3]/(r[3]+r[4])), line:{color:C.male,width:2.5}, hovertemplate:'%{y:.1%}<extra>국외 남아</extra>'}
+  ], L({yaxis:{tickformat:'.0%', range:[0.3,1]}, shapes:[{type:'line',x0:2010,x1:2025,y0:.5,y1:.5,line:{color:'#d1d5db',dash:'dot',width:1}}]}), cfg);
+})();
+
+// ------------------------------------------------------------------ Country
+(function(){
+  const ys = Object.keys(D.country).map(Number);
+  const top = 6; // 상위 6개국 + 기타
+  const order = D.countries.map((c,i)=>[c,Object.values(D.country).reduce((a,r)=>a+r[i],0),i]).sort((a,b)=>b[1]-a[1]);
+  const traces = order.slice(0,top).map(([c,_,i],k)=>({type:'bar', name:c, x:ys, y:ys.map(y=>D.country[y][i]), marker:{color:C.pal[k]}, hovertemplate:`${c} %{y}명<extra></extra>`}));
+  traces.push({type:'bar', name:'기타', x:ys, y:ys.map(y=>order.slice(top).reduce((a,[,,i])=>a+D.country[y][i],0)), marker:{color:'#cbd5e1'}, hovertemplate:'기타 %{y}명<extra></extra>'});
+  Plotly.newPlot('countryStack', traces, L({barmode:'stack', xaxis:{dtick:1}, legend:{orientation:'h', y:1.15, x:0, font:{size:11}, traceorder:'normal'}}), cfg);
+
+  const seg = document.getElementById('segCountry');
+  seg.innerHTML = ys.map(y=>`<button data-y="${y}" class="${y===ys.at(-1)?'on':''}">${y}</button>`).join('');
+  function pick(y){
+    const rows = D.countries.map((c,i)=>[c,D.country[y][i]]).filter(r=>r[1]>0).sort((a,b)=>b[1]-a[1]);
+    const tot = rows.reduce((a,r)=>a+r[1],0);
+    Plotly.react('countryDonut', [{type:'pie', hole:.58, labels:rows.map(r=>r[0]), values:rows.map(r=>r[1]), sort:false, direction:'clockwise',
+      marker:{colors:rows.map(r=>C.pal[order.findIndex(o=>o[0]===r[0])] || '#cbd5e1')}, textinfo:'none', hovertemplate:'%{label} %{value}명 (%{percent})<extra></extra>'}],
+      Object.assign({}, base, {margin:{l:0,r:0,t:6,b:6}, showlegend:false, annotations:[{text:`<b>${tot}</b><br><span style="font-size:11px;color:#6b7280">${y}년 국외입양</span>`, showarrow:false, font:{size:20}}]}), cfg);
+    document.getElementById('countryTable').innerHTML = `<tr><th>국가</th><th style="width:44%"></th><th style="text-align:right">명</th><th style="text-align:right">비중</th></tr>` +
+      rows.map(r=>`<tr><td>${r[0]}</td><td><div class="bar"><i style="width:${100*r[1]/rows[0][1]}%"></i></div></td><td class="n">${r[1]}</td><td class="n">${pct(r[1],tot)}</td></tr>`).join('');
+  }
+  pick(ys.at(-1));
+  seg.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON') return; [...seg.children].forEach(b=>b.classList.toggle('on',b===e.target)); pick(+e.target.dataset.y); });
+})();
+
+// ------------------------------------------------------------------ Age & Reason (100% stacked horizontal)
+function stacked100(id, labels, data, colors){
+  const ys = Object.keys(data);
+  const traces = labels.map((lab,i)=>({type:'bar', orientation:'h', name:lab, y:ys.map(String), x:ys.map(y=>{const t=data[y].reduce((a,b)=>a+b,0); return data[y][i]/t;}),
+    customdata: ys.map(y=>data[y][i]), marker:{color:colors[i]}, hovertemplate:`${lab}: %{customdata}명 (%{x:.1%})<extra></extra>`}));
+  Plotly.newPlot(id, traces, L({barmode:'stack', hovermode:'y unified', xaxis:{tickformat:'.0%', range:[0,1]}, yaxis:{type:'category', autorange:'reversed'}, margin:{l:40,r:16,t:8,b:30}, legend:{orientation:'h', y:1.18, x:0, font:{size:11}, traceorder:'normal'}}), cfg);
+}
+const ageCols = ['#1e3a8a','#2563eb','#60a5fa','#93c5fd','#fbbf24','#f97316','#dc2626'];
+stacked100('ageDom', D.ageBands, D.ageDom, ageCols);
+stacked100('ageIntl', D.ageBands, D.ageIntl, ageCols);
+stacked100('reason', D.reasonLabels, D.reason, ['#2563eb','#f97316','#94a3b8']);
+</script>
+</body>
+</html>
