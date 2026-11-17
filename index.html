@@ -1,491 +1,91 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>한국 입양 통계 대시보드 | Korean Adoption Data</title>
-<meta name="description" content="정부 공식 자료로 보는 한국 입양 통계: 1958년 이후 250,540명, 국외 168,588명, 2025년 140명. 국내·국외 추이, 성별, 수용국, 연령, 발생사유, 정책 연표.">
+<title>Korean Roots Finder | A free guide for Korean adoptees searching for birth family</title>
+<meta name="description" content="Free, step-by-step guidance for Korean adoptees starting a birth-family search, plus the Roots Finder: tick what you have (case number, Korean name, baby photo) and get a personal roadmap with Korean search words.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="한국 입양 통계 대시보드 | Korean Adoption Data">
-<meta property="og:description" content="1958년 이후 250,540명 입양, 그중 168,588명은 국외로. 2025년에는 140명. 보건복지부·KOSIS 공식 자료 기반.">
+<meta property="og:title" content="Korean Roots Finder">
+<meta property="og:description" content="Where to sign up, in what order, and what your papers actually mean. A free guide for Korean adoptees.">
 <meta property="og:url" content="https://korea-adoption-dashboard.vercel.app/">
 <meta name="twitter:card" content="summary">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121212'/%3E%3Crect x='14' y='30' width='9' height='20' rx='3' fill='%2391d8b2'/%3E%3Crect x='28' y='20' width='9' height='30' rx='3' fill='%23a6c8f7'/%3E%3Crect x='42' y='12' width='9' height='38' rx='3' fill='%23c5bcf2'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121212'/%3E%3Ccircle cx='32' cy='26' r='10' fill='%23c5bcf2'/%3E%3Cpath d='M32 36v16M24 46l8 6 8-6' stroke='%2391d8b2' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
-<style>
-:root{
-  --ink:#121212; --ink-2:#3c3a36; --muted:#77736b;
-  --paper:#f4f1e8; --paper-2:#eae5d8; --card:#fffdf8; --line:#e0dacb;
-  --accent:#4a3fd4;
-  --sky:#a6c8f7; --mint:#91d8b2; --lilac:#c5bcf2; --peach:#f8c6a4; --lemon:#f0e483;
-  --dom:#0f9d6b; --dom-t:#9fdcc0; --intl:#4a3fd4; --intl-t:#b9b3f0; --hl:#e08a3c;
-  --r:22px; --r-xl:34px;
-  --display:"Inter Tight",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
-  --body:Inter,Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:90px}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
-a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
-h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.035em;line-height:1.05;margin:0}
-.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
-
-/* header pill */
-header.top{position:sticky;top:12px;z-index:50;margin:12px auto 0;max-width:1180px;padding:0 22px}
-.bar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 8px 8px 20px;box-shadow:0 6px 24px rgba(18,18,18,.06)}
-.brand{font-family:var(--display);font-weight:800;letter-spacing:-.04em;white-space:nowrap;color:var(--ink)}
-.brand span{color:var(--accent)}
-nav.sec{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none}
-nav.sec::-webkit-scrollbar{display:none}
-nav.sec a{color:var(--ink-2);font-size:.86rem;font-weight:600;padding:7px 12px;border-radius:999px;white-space:nowrap}
-nav.sec a:hover{background:var(--paper-2);text-decoration:none}
-nav.sec a.on{background:var(--ink);color:var(--card)}
-.lang{display:inline-flex;background:var(--paper-2);border-radius:999px;padding:3px}
-.lang button{border:0;background:transparent;font:600 .8rem var(--body);padding:6px 11px;border-radius:999px;cursor:pointer;color:var(--muted)}
-.lang button.on{background:var(--ink);color:var(--card)}
-
-/* hero */
-.hero{margin:22px 0 18px;border-radius:var(--r-xl);border:1px solid var(--line);padding:46px 44px 40px;
-  background:radial-gradient(620px 320px at 92% 0%,var(--lilac) 0%,transparent 66%),radial-gradient(520px 300px at 4% 100%,var(--mint) 0%,transparent 62%),radial-gradient(520px 280px at 55% 110%,var(--peach) 0%,transparent 60%),var(--card)}
-.kicker{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.hero h1{font-size:clamp(2.1rem,5vw,3.8rem);margin:14px 0 14px;max-width:22ch}
-.hero p.lede{font-size:1.06rem;color:var(--ink-2);max-width:62ch;margin:0 0 22px}
-.btns{display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:11px 18px;font-weight:600;font-size:.92rem;border:1.5px solid var(--ink);cursor:pointer;font-family:var(--body)}
-.btn-p{background:var(--ink);color:var(--card)} .btn-p:hover{background:var(--accent);border-color:var(--accent);text-decoration:none}
-.btn-s{background:transparent;color:var(--ink)} .btn-s:hover{background:var(--ink);color:var(--card);text-decoration:none}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
-.chip{font-size:.76rem;color:var(--ink-2);background:rgba(255,253,248,.75);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
-
-/* stats */
-.grid{display:grid;gap:14px}
-.g5{grid-template-columns:repeat(5,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)}
-.stat{border-radius:var(--r);padding:22px 20px 20px;background:var(--card);border:1px solid transparent}
-.g5>.stat:nth-child(5n+1),.g4>.stat:nth-child(4n+1){background:var(--sky)}
-.g5>.stat:nth-child(5n+2),.g4>.stat:nth-child(4n+2){background:var(--mint)}
-.g5>.stat:nth-child(5n+3),.g4>.stat:nth-child(4n+3){background:var(--lilac)}
-.g5>.stat:nth-child(5n+4),.g4>.stat:nth-child(4n+4){background:var(--peach)}
-.g5>.stat:nth-child(5n+5){background:var(--lemon)}
-.stat .l{font-size:.8rem;font-weight:700;color:var(--ink-2)}
-.stat .n{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,2.5vw,2.3rem);letter-spacing:-.045em;line-height:1;margin:10px 0 8px;white-space:nowrap}
-.stat .s{font-size:.78rem;color:var(--ink-2);line-height:1.4}
-.g4.light>.stat{background:var(--card)!important;border-color:var(--line)}
-
-/* sections */
-section{padding:42px 0 10px}
-.sechead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
-.sechead h2{font-size:clamp(1.5rem,2.8vw,2.2rem);margin-top:8px}
-.sechead p{margin:8px 0 0;color:var(--ink-2);max-width:70ch;font-size:.95rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 14px;min-width:0}
-.card h3{font-size:1.12rem;letter-spacing:-.02em}
-.card .desc{font-size:.85rem;color:var(--muted);margin:4px 0 8px}
-.src{font-size:.72rem;color:var(--muted);margin:6px 0 4px}
-.plot{width:100%;height:360px} .plot.tall{height:430px} .plot.short{height:290px}
-.seg{display:inline-flex;background:var(--paper-2);border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}
-.seg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font:600 .82rem var(--body);color:var(--ink-2);cursor:pointer}
-.seg button.on{background:var(--ink);color:var(--card)}
-.note{background:var(--lemon);border-radius:var(--r);padding:16px 20px;font-size:.9rem;color:#3d3505;margin-top:14px}
-.note b{color:#2b2503}
-
-table.rank{width:100%;border-collapse:collapse;font-size:.88rem}
-table.rank th{font-weight:600;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);font-size:.76rem}
-table.rank td{padding:8px 4px;border-bottom:1px solid #efe9db}
-table.rank td.n{text-align:right;font-variant-numeric:tabular-nums}
-.bar-in{height:8px;border-radius:99px;background:var(--paper-2);position:relative;overflow:hidden}
-.bar-in>i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--intl)}
-
-/* timeline */
-ol.tl{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-ol.tl li{display:grid;grid-template-columns:120px 1fr;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px}
-ol.tl .d{font-family:var(--display);font-weight:800;font-size:1.05rem;letter-spacing:-.03em}
-ol.tl .t{font-weight:700;margin-bottom:2px}
-ol.tl .x{font-size:.9rem;color:var(--ink-2)}
-ol.tl li:nth-child(5n+1) .d{color:#153a70} ol.tl li:nth-child(5n+2) .d{color:#0f4a31} ol.tl li:nth-child(5n+3) .d{color:#2c2073} ol.tl li:nth-child(5n+4) .d{color:#7a3c11} ol.tl li:nth-child(5n+5) .d{color:#5c4f06}
-
-footer.foot{margin:44px 22px 22px;background:var(--ink);color:#d9d4c7;border-radius:var(--r-xl);padding:36px 40px;font-size:.85rem;line-height:1.75}
-footer.foot .in{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:36px}
-footer.foot h4{font-family:var(--display);color:#fff;font-size:1rem;margin:0 0 8px;letter-spacing:-.02em}
-footer.foot a{color:var(--sky)}
-footer.foot ul{margin:0;padding-left:18px}
-footer.foot code{font-size:.75rem;color:var(--mint);word-break:break-all}
-
-@media (max-width:960px){.g5{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}footer.foot .in{grid-template-columns:1fr}.hero{padding:34px 24px}ol.tl li{grid-template-columns:1fr;gap:4px}.brand{display:none}}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-<header class="top"><div class="bar">
-  <div class="brand" data-i18n="brand">입양 <span>Data</span></div>
-  <nav class="sec" id="secnav">
-    <a href="#overview" data-i18n="nav.overview">개요</a>
-    <a href="#trend" data-i18n="nav.trend">추이</a>
-    <a href="#sex" data-i18n="nav.sex">성별</a>
-    <a href="#where" data-i18n="nav.where">수용국</a>
-    <a href="#who" data-i18n="nav.who">연령·사유</a>
-    <a href="#policy" data-i18n="nav.policy">정책 연표</a>
-    <a href="#sources" data-i18n="nav.sources">출처</a>
-  </nav>
-  <div class="lang" id="lang"><button data-l="ko" class="on">KO</button><button data-l="en">EN</button></div>
-</div></header>
+<body data-page="home">
+<header id="hdr"></header>
 
 <main class="wrap">
-  <div class="hero" id="overview">
-    <div class="kicker" data-i18n="hero.kicker">한국 입양 통계 · 정부 공식 자료</div>
-    <h1 id="heroH1"></h1>
-    <p class="lede" data-i18n="hero.lede"></p>
+  <div class="hero">
+    <div class="kicker">For Korean adoptees · free · volunteer-run</div>
+    <h1>Start finding your roots in Korea.</h1>
+    <p class="lede">Where to sign up, in what order, and what the papers in your folder actually mean. Everything that matters at the start is free, and you can begin from wherever you live today.</p>
     <div class="btns">
-      <a class="btn btn-p" href="#trend" data-i18n="hero.cta">추이 보기 →</a>
-      <button class="btn btn-s" id="dl" data-i18n="hero.dl">데이터 CSV 내려받기</button>
-      <a class="btn btn-s" href="https://rootsinkorea.org/stats" target="_blank" rel="noopener" data-i18n="hero.roots">Roots in Korea ↗</a>
-    </div>
-    <div class="chips">
-      <span class="chip">KOSIS DT_11770N001</span><span class="chip" data-i18n="chip.enara">e-나라지표 2708</span>
-      <span class="chip" data-i18n="chip.datago">공공데이터포털 15127995</span><span class="chip" data-i18n="chip.mohw">보건복지부 입양의 날 보도자료 2020–2026</span>
+      <a class="btn btn-p" href="guide.html">Start the step-by-step guide →</a>
+      <a class="btn btn-s" href="finder.html">Check what you have</a>
     </div>
   </div>
 
-  <div class="grid g5" id="kpis"></div>
-
-  <section style="padding-top:22px">
-    <div class="grid g4 light" id="scale"></div>
+  <section>
+    <div class="grid g2 pastel">
+      <a class="card door" href="guide.html" style="color:inherit;text-decoration:none">
+        <div>
+          <div class="num">01 · The guide</div>
+          <h2>Your search, step by step.</h2>
+          <p>Eight steps from "I have a folder of papers" to "I'm ready to meet someone." Each step tells you exactly where to sign up, what it costs, and what you will get back.</p>
+        </div>
+        <span class="link-go">Open the guide →</span>
+      </a>
+      <a class="card door" href="finder.html" style="color:inherit;text-decoration:none">
+        <div>
+          <div class="num">02 · Roots Finder</div>
+          <h2>What does what you have mean?</h2>
+          <p>Tick what you have: a case number, a Korean name, a baby photo, a place you were found. Or paste text from your papers. The Finder explains each item, gives you the Korean search words, and builds your personal roadmap.</p>
+        </div>
+        <span class="link-go">Open the Finder →</span>
+      </a>
+    </div>
   </section>
 
-  <section id="trend">
+  <section>
     <div class="sechead">
-      <div><div class="kicker" data-i18n="trend.k">추이</div><h2 data-i18n="trend.h">국내·국외 입양, 2001–2025</h2><p data-i18n="trend.p"></p></div>
-      <div class="seg" id="segTrend"><button data-v="abs" class="on" data-i18n="seg.abs">인원</button><button data-v="share" data-i18n="seg.share">비중 100%</button></div>
+      <div class="kicker">Three things to know first</div>
+      <h2>Before you spend a single dollar</h2>
     </div>
-    <div class="card"><div id="cTrend" class="plot tall"></div><div class="src" data-i18n="src.trend"></div></div>
+    <div class="grid g3">
+      <div class="card">
+        <h3>Your records are free</h3>
+        <p>Since 19 July 2025 every Korean adoption file is held by NCRC, the National Center for the Rights of the Child. Requesting your information, reviewing your file and registering your DNA with the Korean police cost nothing.</p>
+      </div>
+      <div class="card">
+        <h3>You can start from abroad</h3>
+        <p>The records request is filed online, and the police DNA sample can be given at a Korean embassy or consulate. You do not need to fly to Korea to begin.</p>
+      </div>
+      <div class="card">
+        <h3>Thin files are normal</h3>
+        <p>Many files contain very little, and some contain errors. That is a documented pattern, not your failure. DNA and public search boards exist exactly for this.</p>
+      </div>
+    </div>
+    <div class="note lemon"><b>A warning worth repeating.</b> NCRC has stated that private homeland-visit programs are not affiliated with it. Nobody can sell you "access" to your own file. If someone asks you to pay for something on the list above, walk away.</div>
   </section>
 
-  <section id="sex">
-    <div class="sechead"><div><div class="kicker" data-i18n="sex.k">성별</div><h2 data-i18n="sex.h">국내는 여아, 국외는 남아</h2><p data-i18n="sex.p"></p></div></div>
-    <div class="grid g2">
-      <div class="card"><h3 data-i18n="sex.dom">국내입양 성별</h3><div id="cSexDom" class="plot"></div></div>
-      <div class="card"><h3 data-i18n="sex.intl">국외입양 성별</h3><div id="cSexIntl" class="plot"></div></div>
+  <section>
+    <div class="grid g2" style="align-items:center">
+      <div>
+        <div class="kicker">Who made this</div>
+        <h2 style="font-size:clamp(1.6rem,3vw,2.4rem);margin-top:8px">Hi, I'm HJ Kim.</h2>
+        <p class="lede">I live in Seoul, I speak the language, and I know how the offices here work. I built this guide as volunteer work so the first steps are open to everyone.</p>
+        <div class="btns"><a class="btn btn-s" href="about.html">Why I do this</a><a class="btn btn-p" href="about.html#donate">Support this work</a></div>
+      </div>
+      <div class="portrait" style="max-width:340px;justify-self:end"><img src="hj-kim.jpg" alt="Portrait of HJ Kim"></div>
     </div>
-    <div class="card" style="margin-top:14px"><h3 data-i18n="sex.ratio">성비 추이</h3><div id="cSexRatio" class="plot short"></div><div class="src" data-i18n="src.sex"></div></div>
-  </section>
-
-  <section id="where">
-    <div class="sechead">
-      <div><div class="kicker" data-i18n="where.k">수용국</div><h2 data-i18n="where.h">국외입양 아동은 어디로 갔나</h2><p data-i18n="where.p"></p></div>
-      <div class="seg" id="segCountry"></div>
-    </div>
-    <div class="grid g2">
-      <div class="card"><h3 data-i18n="where.stack">연도별 수용국 분포 2017–2024</h3><div id="cCountry" class="plot"></div></div>
-      <div class="card"><h3 id="donutTitle"></h3><div id="cDonut" class="plot" style="height:220px"></div><table class="rank" id="tCountry"></table></div>
-    </div>
-    <div class="src" data-i18n="src.country"></div>
-  </section>
-
-  <section id="who">
-    <div class="sechead"><div><div class="kicker" data-i18n="who.k">연령·사유</div><h2 data-i18n="who.h">누가, 왜 입양되었나</h2><p data-i18n="who.p"></p></div></div>
-    <div class="grid g2">
-      <div class="card"><h3 data-i18n="who.ageDom">국내입양 연령대</h3><div id="cAgeDom" class="plot short"></div></div>
-      <div class="card"><h3 data-i18n="who.ageIntl">국외입양 연령대</h3><div id="cAgeIntl" class="plot short"></div></div>
-    </div>
-    <div class="card" style="margin-top:14px"><h3 data-i18n="who.reason">입양아동 발생 사유</h3><div id="cReason" class="plot short"></div><div class="src" data-i18n="src.who"></div></div>
-  </section>
-
-  <section id="policy">
-    <div class="sechead"><div><div class="kicker" data-i18n="pol.k">정책 연표</div><h2 data-i18n="pol.h">공식적으로 무엇이 바뀌었나</h2><p data-i18n="pol.p"></p></div></div>
-    <ol class="tl" id="timeline"></ol>
-    <div class="note" data-i18n="pol.note"></div>
   </section>
 </main>
 
-<footer class="foot" id="sources"><div class="in">
-  <div>
-    <h4 data-i18n="f.h1">데이터 출처</h4>
-    <ul>
-      <li data-i18n="f.s1"></li>
-      <li data-i18n="f.s2"></li>
-      <li data-i18n="f.s3"></li>
-      <li data-i18n="f.s4"></li>
-    </ul>
-    <p style="margin-top:12px"><code>kosis.kr/openapi/Param/statisticsParameterData.do?orgId=117&amp;tblId=DT_11770N001&amp;objL1=ALL&amp;itmId=A02&amp;prdSe=Y</code></p>
-  </div>
-  <div>
-    <h4 data-i18n="f.h2">유의사항</h4>
-    <ul>
-      <li data-i18n="f.n1"></li>
-      <li data-i18n="f.n2"></li>
-      <li data-i18n="f.n3"></li>
-    </ul>
-    <p style="margin-top:12px" data-i18n="f.upd"></p>
-    <p><a href="https://github.com/kimbabchapati664/korea-adoption-dashboard" target="_blank" rel="noopener">GitHub</a> · <a href="v1.html">v1</a> · <a href="https://rootsinkorea.org" target="_blank" rel="noopener">rootsinkorea.org</a></p>
-  </div>
-</div></footer>
-
-<script>
-/* ===================================================================== DATA */
-const D = {
-  years:[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],
-  dom:  [1770,1694,1564,1641,1461,1332,1388,1306,1314,1462,1548,1125,686,637,683,546,465,378,387,260,226,182,150,154,116],
-  intl: [2436,2365,2287,2258,2101,1899,1264,1250,1125,1013,916,755,236,535,374,334,398,303,317,232,189,142,79,58,24],
-  cumulative:250540, cumulativeIntl:168588, peakYear:1985, peakIntl:8837, decade80s:66511,
-  sex:[[2010,479,983,675,338],[2011,482,1066,629,287],[2012,410,715,590,165],[2013,203,483,194,42],[2014,223,414,438,97],[2015,222,461,287,87],[2016,191,355,269,65],[2017,150,315,302,96],[2018,110,268,221,82],[2019,125,262,233,84],[2020,90,170,192,40],[2021,78,148,133,56],[2022,67,115,92,50],[2023,61,89,53,26],[2024,76,78,42,16],[2025,52,64,21,3]],
-  countryKeys:['us','ca','se','au','no','it','dk','fr','lu','uk','de'],
-  country:{2017:[274,28,25,24,20,11,6,5,5,0,0],2018:[188,22,28,14,19,12,7,7,5,0,1],2019:[232,23,13,10,12,15,3,5,3,1,0],2020:[156,19,18,17,7,9,3,2,1,0,0],2021:[126,17,14,11,7,7,3,1,3,0,0],2022:[99,10,9,2,6,4,5,4,3,0,0],2023:[48,10,8,3,4,5,0,0,1,0,0],2024:[41,4,3,5,3,2,0,0,0,0,0]},
-  ageDom:{2023:[75,48,10,8,8,1,0],2024:[70,67,5,5,3,4,0],2025:[33,57,8,3,6,7,2]},
-  ageIntl:{2023:[0,64,12,0,3,0,0],2024:[1,47,8,1,1,0,0],2025:[0,18,5,1,0,0,0]},
-  reason:{2022:[279,42,3],2023:[167,54,8],2024:[172,35,5],2025:[90,29,21]}
-};
-
-/* ===================================================================== I18N */
-const I = {
-ko:{
- 'brand':'입양 <span>Data</span>',
- 'nav.overview':'개요','nav.trend':'추이','nav.sex':'성별','nav.where':'수용국','nav.who':'연령·사유','nav.policy':'정책 연표','nav.sources':'출처',
- 'hero.kicker':'한국 입양 통계 · 정부 공식 자료',
- 'hero.h1':'2025년 140명.<br>2001년보다 96.7% 줄었습니다.',
- 'hero.lede':'1958년 이후 한국에서 입양된 아동은 250,540명, 그중 168,588명이 국외로 보내졌습니다. 이 대시보드는 KOSIS와 보건복지부 자료로 국내·국외 입양의 규모, 성별, 수용국, 연령, 발생사유와 정책 변화를 보여줍니다.',
- 'hero.cta':'추이 보기 →','hero.dl':'데이터 CSV 내려받기','hero.roots':'Roots in Korea ↗',
- 'chip.enara':'e-나라지표 2708','chip.datago':'공공데이터포털 15127995','chip.mohw':'보건복지부 입양의 날 보도자료 2020–2026',
- 'k.total':'2025년 전체 입양','k.dom':'국내입양','k.intl':'국외입양','k.drop':'2001년 대비','k.cum':'1958년 이후 누계',
- 'k.totalS':(d,p)=>`전년 대비 ${d}명 (${p})`,'k.domS':(a,b)=>`전체의 ${a} · 2024년 ${b}`,'k.intlS':(a,b)=>`전체의 ${a} · 남아 ${b}`,'k.dropS':(a,b)=>`${a}명 → ${b}명`,'k.cumS':(a,b)=>`국외 ${a}명 (${b})`,
- 's.peak':'1985년 한 해 국외입양','s.peakS':'역대 최고치','s.80s':'1980년대 국외입양','s.80sS':'가장 많았던 10년','s.us':'미국행 비중 2017–2024','s.usS':(a,b)=>`국외입양 ${a}명 중 ${b}명`,'s.ratio':'국내입양 비중 2025','s.ratioS':'2001년 42.1%',
- 'trend.k':'추이','trend.h':'국내·국외 입양, 2001–2025','trend.p':'막대는 입양 아동 수, 선은 국내입양 비중입니다. 점선은 주요 제도 변화 시점입니다.',
- 'seg.abs':'인원','seg.share':'비중 100%','dom':'국내','intl':'국외','domShare':'국내 비중','unit':'명',
- 'ann.2012':'입양특례법 시행 (2012.8)','ann.2025':'공적 입양체계 (2025.7)',
- 'src.trend':'출처: KOSIS DT_11770N001 (보건복지부 「가정위탁국내입양현황」), e-나라지표 2708',
- 'sex.k':'성별','sex.h':'국내는 여아, 국외는 남아','sex.p':'2010–2025. 같은 색의 진한 막대가 다수 성별입니다. 2025년 국외입양 24명 중 21명이 남아였습니다.',
- 'sex.dom':'국내입양 성별','sex.intl':'국외입양 성별','sex.ratio':'성비 추이','male':'남아','female':'여아','domGirl':'국내입양 여아 비중','intlBoy':'국외입양 남아 비중',
- 'src.sex':'출처: 공공데이터포털 「보건복지부_입양 아동 현황」(2010–2024), 보건복지부 2026.5 보도자료(2025)',
- 'where.k':'수용국','where.h':'국외입양 아동은 어디로 갔나','where.p':'2017–2024년 국외입양 1,718명의 수용국. 2025년(24명)의 국가별 분포는 공개되지 않았습니다.',
- 'where.stack':'연도별 수용국 분포 2017–2024','donut':y=>`${y}년 수용국`,'others':'기타','country':'국가','share':'비중',
- 'src.country':'출처: 보건복지부 입양의 날 보도자료 (2020.5, 2023.5, 2024.5, 2025.5) 붙임 통계',
- 'who.k':'연령·사유','who.h':'누가, 왜 입양되었나','who.p':'2023–2025 연령대와 2022–2025 발생사유. 국외입양은 1–2세에 집중되고, 2025년에는 보호출산을 포함한 기타 사유가 늘었습니다.',
- 'who.ageDom':'국내입양 연령대','who.ageIntl':'국외입양 연령대','who.reason':'입양아동 발생 사유',
- 'src.who':'출처: 보건복지부 2025.5 · 2026.5 입양의 날 보도자료',
- 'pol.k':'정책 연표','pol.h':'공식적으로 무엇이 바뀌었나','pol.p':'통계의 변곡점 뒤에는 제도 변화가 있습니다.',
- 'pol.note':'<b>숫자 읽는 법.</b> 250,540명은 1958년 이후 국내·국외 합계입니다. 해외 언론이나 입양인 단체가 인용하는 "20만 명 이상"은 국외입양만, 다른 기준과 시작 연도로 센 수치입니다. 둘 다 틀린 숫자가 아닙니다.',
- 'f.h1':'데이터 출처','f.h2':'유의사항',
- 'f.s1':'<b>연도별 국내/국외</b>: KOSIS 보건복지부 「가정위탁국내입양현황」 DT_11770N001 (2026-08-21 갱신), e-나라지표 2708',
- 'f.s2':'<b>성별</b>: 공공데이터포털 15127995 「보건복지부_입양 아동 현황」 2010–2024, 2025년은 보도자료',
- 'f.s3':'<b>수용국·연령·사유</b>: 보건복지부 「입양의 날」 보도자료 붙임 통계 (API 없음, 매년 5월 발표)',
- 'f.s4':'<b>역사적 규모·정책 연표</b>: 보건복지부, 진실화해위원회 발표 (rootsinkorea.org/stats 정리)',
- 'f.n1':'기준: 해당 연도에 법원 입양허가(인용판결)가 완료된 아동 수.',
- 'f.n2':'2013년 국외입양 급감(755→236)은 2012.8 입양특례법 시행에 따른 법원 허가 절차 도입의 과도기 영향입니다.',
- 'f.n3':'배우자의 친생자 입양(재혼가정 등)은 포함되지 않습니다.',
- 'f.upd':'데이터 기준: 2025년 · 다음 공식 발표 2027년 5월 (입양의 날)',
- tl:[
-  ['2006.5','첫 「입양의 날」','매년 5월 11일을 입양의 날로 정하고 국내입양 활성화 캠페인 시작.'],
-  ['2007.1','입양비용·양육수당 지원','국내 입양가정에 입양비용과 입양아동 양육수당 지원 시작.'],
-  ['2012.8','입양특례법 전면 시행','입양에 법원 허가 절차 도입. 이듬해 국외입양이 755명에서 236명으로 급감.'],
-  ['2022','입양축하금 신설','입양축하금 200만원, 양육수당 월 20만원으로 인상.'],
-  ['2025.3','진실화해위, 인권침해 인정','해외입양 과정의 인권침해를 국가기관이 처음으로 인정. 367건 중 56건 진실규명.'],
-  ['2025.7','공적 입양체계 출범','「국내입양에 관한 특별법」·「국제입양에 관한 법률」 시행. 입양기록은 아동권리보장원으로 일원화.'],
-  ['2025.10','헤이그협약 발효','헤이그국제아동입양협약 당사국 지위 공식 발효.'],
-  ['2025.12','해외입양 단계적 중단','제3차 아동정책기본계획: 2029년까지 국외입양 0명 목표.'],
-  ['2026.3','진실화해위 재조사','입양 사기 의혹 재조사 착수. 300명 이상의 입양인이 신청.']
- ],
- countries:{us:'미국',ca:'캐나다',se:'스웨덴',au:'호주',no:'노르웨이',it:'이탈리아',dk:'덴마크',fr:'프랑스',lu:'룩셈부르크',uk:'영국',de:'독일'},
- ageBands:['1세 미만','1–2세','2–3세','3–4세','4–6세','6–12세','12세 이상'],
- reasons:['미혼모·부 아동(혼외자 포함)','유기아동','기타(보호출산 포함)'],
- csv:'korea_adoption_data_ko.csv'
-},
-en:{
- 'brand':'Adoption <span>Data</span>',
- 'nav.overview':'Overview','nav.trend':'Trend','nav.sex':'Sex','nav.where':'Destinations','nav.who':'Age & reasons','nav.policy':'Policy','nav.sources':'Sources',
- 'hero.kicker':'Korean adoption · official government data',
- 'hero.h1':'140 children in 2025.<br>Down 96.7% since 2001.',
- 'hero.lede':'Since 1958, 250,540 children have been adopted in Korea, and 168,588 of them were sent overseas. This dashboard uses KOSIS and Ministry of Health and Welfare data to show the scale of domestic and overseas adoption, sex, destination countries, age, reasons, and policy changes.',
- 'hero.cta':'See the trend →','hero.dl':'Download data (CSV)','hero.roots':'Roots in Korea ↗',
- 'chip.enara':'e-Narajipyo 2708','chip.datago':'data.go.kr 15127995','chip.mohw':'MOHW Adoption Day releases 2020–2026',
- 'k.total':'Adoptions in 2025','k.dom':'Domestic','k.intl':'Overseas','k.drop':'Change since 2001','k.cum':'Total since 1958',
- 'k.totalS':(d,p)=>`${d} vs 2024 (${p})`,'k.domS':(a,b)=>`${a} of total · 2024: ${b}`,'k.intlS':(a,b)=>`${a} of total · boys ${b}`,'k.dropS':(a,b)=>`${a} → ${b}`,'k.cumS':(a,b)=>`${a} overseas (${b})`,
- 's.peak':'Sent overseas in 1985 alone','s.peakS':'The all-time peak year','s.80s':'Overseas adoptions in the 1980s','s.80sS':'The peak decade','s.us':'Share to the US, 2017–2024','s.usS':(a,b)=>`${b} of ${a} overseas adoptions`,'s.ratio':'Domestic share, 2025','s.ratioS':'42.1% in 2001',
- 'trend.k':'Trend','trend.h':'Domestic and overseas adoption, 2001–2025','trend.p':'Bars show children adopted; the line shows the domestic share. Dotted lines mark major legal changes.',
- 'seg.abs':'Count','seg.share':'Share 100%','dom':'Domestic','intl':'Overseas','domShare':'Domestic share','unit':'',
- 'ann.2012':'Special Adoption Act (Aug 2012)','ann.2025':'Public adoption system (Jul 2025)',
- 'src.trend':'Source: KOSIS DT_11770N001 (Ministry of Health and Welfare), e-Narajipyo 2708',
- 'sex.k':'Sex','sex.h':'Girls stayed, boys were sent abroad','sex.p':'2010–2025. The darker bar in each panel is the majority sex. In 2025, 21 of the 24 children adopted overseas were boys.',
- 'sex.dom':'Domestic adoption by sex','sex.intl':'Overseas adoption by sex','sex.ratio':'Sex ratio over time','male':'Boys','female':'Girls','domGirl':'Domestic: share of girls','intlBoy':'Overseas: share of boys',
- 'src.sex':'Source: data.go.kr 15127995 (2010–2024), MOHW May 2026 release (2025)',
- 'where.k':'Destinations','where.h':'Where adoptees were sent','where.p':'Receiving countries for 1,718 overseas adoptions, 2017–2024. The 2025 split (24 children) has not been published.',
- 'where.stack':'Receiving countries by year, 2017–2024','donut':y=>`Receiving countries, ${y}`,'others':'Other','country':'Country','share':'Share',
- 'src.country':'Source: MOHW Adoption Day press releases (May 2020, 2023, 2024, 2025)',
- 'who.k':'Age & reasons','who.h':'Who was adopted, and why','who.p':'Age bands 2023–2025 and reasons 2022–2025. Overseas adoption is concentrated at ages 1–2; in 2025 "other" reasons, including protected births, rose.',
- 'who.ageDom':'Domestic adoption by age','who.ageIntl':'Overseas adoption by age','who.reason':'Why children were placed',
- 'src.who':'Source: MOHW Adoption Day releases, May 2025 and May 2026',
- 'pol.k':'Policy','pol.h':'What has officially changed','pol.p':'Behind every turning point in the numbers is a change in the rules.',
- 'pol.note':'<b>Reading the big number.</b> 250,540 is domestic plus overseas since 1958. The "over 200,000" figure used by adoptee groups and international press counts overseas adoptees only, with different start years and rules. Both are real; neither is a typo.',
- 'f.h1':'Data sources','f.h2':'Notes',
- 'f.s1':'<b>Yearly domestic/overseas</b>: KOSIS, MOHW table DT_11770N001 (updated 2026-08-21), e-Narajipyo 2708',
- 'f.s2':'<b>Sex</b>: data.go.kr 15127995, 2010–2024; 2025 from the press release',
- 'f.s3':'<b>Countries, age, reasons</b>: MOHW Adoption Day press-release annexes (no API, published each May)',
- 'f.s4':'<b>Historical scale and policy</b>: MOHW and Truth and Reconciliation Commission (compiled at rootsinkorea.org/stats)',
- 'f.n1':'Counts are children whose adoption was finalised by court approval in that year.',
- 'f.n2':'The 2013 drop in overseas adoption (755 → 236) reflects the transition to court approval under the Special Adoption Act of August 2012.',
- 'f.n3':'Step-parent adoptions are not included.',
- 'f.upd':'Data through 2025 · next official release May 2027 (Adoption Day)',
- tl:[
-  ['May 2006','First Adoption Day','May 11 designated as Adoption Day to promote domestic adoption.'],
-  ['Jan 2007','Adoption subsidies','Adoption costs and child allowances introduced for domestic adoptive families.'],
-  ['Aug 2012','Special Adoption Act','Court approval required for adoption. Overseas adoption fell from 755 to 236 the next year.'],
-  ['2022','Adoption grant','₩2M adoption grant introduced; monthly allowance raised to ₩200K.'],
-  ['Mar 2025','State admits fault','Truth and Reconciliation Commission recognised human rights violations in intercountry adoption. 56 of 367 complaints recognised.'],
-  ['Jul 2025','Public adoption system','New domestic and intercountry adoption laws took effect. All records moved to NCRC.'],
-  ['Oct 2025','Hague Convention','Korea became a party to the Hague Intercountry Adoption Convention.'],
-  ['Dec 2025','Overseas adoption to end','3rd Basic Plan for Child Policy targets zero overseas adoptions by 2029.'],
-  ['Mar 2026','Investigation reopened','The commission relaunched its adoption-fraud probe. Over 300 adoptees have filed.']
- ],
- countries:{us:'United States',ca:'Canada',se:'Sweden',au:'Australia',no:'Norway',it:'Italy',dk:'Denmark',fr:'France',lu:'Luxembourg',uk:'UK',de:'Germany'},
- ageBands:['Under 1','1–2','2–3','3–4','4–6','6–12','12+'],
- reasons:['Born to unmarried parents','Abandoned','Other (incl. protected birth)'],
- csv:'korea_adoption_data_en.csv'
-}};
-let LANG = (new URLSearchParams(location.search).get('lang')) || localStorage.getItem('adoptLang') || 'ko';
-if(!I[LANG]) LANG='ko';
-const T = k => I[LANG][k];
-
-/* ===================================================================== HELPERS */
-const C = {dom:'#0f9d6b',domT:'#9fdcc0',intl:'#4a3fd4',intlT:'#b9b3f0',hl:'#e08a3c',ink:'#121212',muted:'#77736b',line:'#e0dacb'};
-const intlRamp = ['#2c2073','#4a3fd4','#6f66e0','#958ee9','#b9b3f0','#d6d2f6','#cdc5b1'];
-const nf = n => n.toLocaleString(LANG==='ko'?'ko-KR':'en-US');
-const pct = (a,b,d=1) => (100*a/b).toFixed(d)+'%';
-const withUnit = n => nf(n)+(T('unit')||'');
-const cfg = {displayModeBar:false,responsive:true};
-const base = () => ({font:{family:'Inter, Pretendard, sans-serif',size:12,color:'#3c3a36'},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
-  margin:{l:46,r:16,t:10,b:36},legend:{orientation:'h',y:1.13,x:0,font:{size:12},traceorder:'normal'},hovermode:'x unified',
-  hoverlabel:{bgcolor:'#fffdf8',bordercolor:'#e0dacb',font:{family:'Inter, Pretendard, sans-serif',size:12,color:'#121212'}},
-  xaxis:{gridcolor:'rgba(0,0,0,0)',zeroline:false,tickfont:{size:11,color:C.muted},linecolor:C.line},
-  yaxis:{gridcolor:'#ebe5d6',zeroline:false,tickfont:{size:11,color:C.muted}}});
-const L = o => {const b=base(); return Object.assign(b,o,{xaxis:Object.assign(b.xaxis,o.xaxis||{}),yaxis:Object.assign(b.yaxis,o.yaxis||{})});};
-
-/* ===================================================================== RENDER */
-function renderText(){
-  document.documentElement.lang = LANG;
-  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=T(el.dataset.i18n); if(typeof v==='string') el.innerHTML=v;});
-  document.getElementById('heroH1').innerHTML = T('hero.h1');
-  document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===LANG));
-}
-
-function renderKpis(){
-  const n=D.years.length, tot=D.dom[n-1]+D.intl[n-1], prev=D.dom[n-2]+D.intl[n-2], first=D.dom[0]+D.intl[0], s=D.sex.at(-1);
-  const k=[
-    [T('k.total'),withUnit(tot),T('k.totalS')(nf(tot-prev),pct(tot-prev,prev))],
-    [T('k.dom'),withUnit(D.dom[n-1]),T('k.domS')(pct(D.dom[n-1],tot),pct(D.dom[n-2],prev))],
-    [T('k.intl'),withUnit(D.intl[n-1]),T('k.intlS')(pct(D.intl[n-1],tot),pct(s[3],s[3]+s[4]))],
-    [T('k.drop'),'−'+pct(first-tot,first),T('k.dropS')(nf(first),nf(tot))],
-    [T('k.cum'),withUnit(D.cumulative),T('k.cumS')(nf(D.cumulativeIntl),pct(D.cumulativeIntl,D.cumulative))]
-  ];
-  document.getElementById('kpis').innerHTML = k.map(([l,v,s])=>`<div class="stat"><div class="l">${l}</div><div class="n">${v}</div><div class="s">${s}</div></div>`).join('');
-  const all=Object.values(D.country).flat().reduce((a,b)=>a+b,0), us=Object.values(D.country).reduce((a,r)=>a+r[0],0);
-  const sc=[
-    [T('s.peak'),withUnit(D.peakIntl),T('s.peakS')],
-    [T('s.80s'),withUnit(D.decade80s),T('s.80sS')],
-    [T('s.us'),pct(us,all,0),T('s.usS')(nf(all),nf(us))],
-    [T('s.ratio'),pct(D.dom[n-1],tot),T('s.ratioS')]
-  ];
-  document.getElementById('scale').innerHTML = sc.map(([l,v,s])=>`<div class="stat"><div class="l">${l}</div><div class="n">${v}</div><div class="s">${s}</div></div>`).join('');
-}
-
-let trendMode='abs';
-function renderTrend(){
-  const share=D.years.map((_,i)=>D.dom[i]/(D.dom[i]+D.intl[i]));
-  const u=T('unit');
-  const mark=(x,txt)=>({shape:{type:'line',x0:x,x1:x,y0:0,y1:1,yref:'paper',line:{color:'#9a9486',width:1,dash:'dot'}},ann:{x,y:1,yref:'paper',text:txt,showarrow:false,xanchor:'left',yanchor:'top',xshift:5,font:{size:11,color:C.muted}}});
-  const marks=[mark(2012.5,T('ann.2012')),mark(2024.55,T('ann.2025'))];
-  marks[1].ann.xanchor='right'; marks[1].ann.xshift=-5; marks[1].ann.y=.93;
-  let tr,lay;
-  if(trendMode==='abs'){
-    tr=[{type:'bar',name:T('dom'),x:D.years,y:D.dom,marker:{color:C.dom},hovertemplate:`${T('dom')} %{y:,}${u}<extra></extra>`},
-        {type:'bar',name:T('intl'),x:D.years,y:D.intl,marker:{color:C.intl},hovertemplate:`${T('intl')} %{y:,}${u}<extra></extra>`},
-        {type:'scatter',mode:'lines+markers',name:T('domShare'),x:D.years,y:share,yaxis:'y2',line:{color:C.hl,width:2.5},marker:{size:5},hovertemplate:`${T('domShare')} %{y:.1%}<extra></extra>`}];
-    lay=L({barmode:'stack',bargap:.22,margin:{l:46,r:46,t:10,b:36},yaxis2:{overlaying:'y',side:'right',tickformat:'.0%',range:[0,1],showgrid:false,tickfont:{size:11,color:C.hl}},
-      shapes:marks.map(m=>m.shape),annotations:marks.map(m=>m.ann)});
-  } else {
-    tr=[{type:'bar',name:T('dom'),x:D.years,y:share,marker:{color:C.dom},hovertemplate:`${T('dom')} %{y:.1%}<extra></extra>`},
-        {type:'bar',name:T('intl'),x:D.years,y:share.map(s=>1-s),marker:{color:C.intl},hovertemplate:`${T('intl')} %{y:.1%}<extra></extra>`}];
-    lay=L({barmode:'stack',bargap:.22,yaxis:{tickformat:'.0%',range:[0,1]},shapes:marks.map(m=>m.shape)});
-  }
-  Plotly.react('cTrend',tr,lay,cfg);
-}
-
-function renderSex(){
-  const ys=D.sex.map(r=>r[0]), u=T('unit');
-  const mk=(id,mi,fi,solid,tint,maj)=>{
-    const m={type:'bar',name:T('male'),x:ys,y:D.sex.map(r=>r[mi]),marker:{color:maj==='m'?solid:tint},hovertemplate:`${T('male')} %{y:,}${u}<extra></extra>`};
-    const f={type:'bar',name:T('female'),x:ys,y:D.sex.map(r=>r[fi]),marker:{color:maj==='f'?solid:tint},hovertemplate:`${T('female')} %{y:,}${u}<extra></extra>`};
-    Plotly.react(id,[m,f],L({barmode:'stack',bargap:.25}),cfg);
-  };
-  mk('cSexDom',1,2,C.dom,C.domT,'f'); mk('cSexIntl',3,4,C.intl,C.intlT,'m');
-  Plotly.react('cSexRatio',[
-    {type:'scatter',mode:'lines+markers',name:T('domGirl'),x:ys,y:D.sex.map(r=>r[2]/(r[1]+r[2])),line:{color:C.dom,width:2.5},hovertemplate:'%{y:.1%}<extra></extra>'},
-    {type:'scatter',mode:'lines+markers',name:T('intlBoy'),x:ys,y:D.sex.map(r=>r[3]/(r[3]+r[4])),line:{color:C.intl,width:2.5},hovertemplate:'%{y:.1%}<extra></extra>'}
-  ],L({yaxis:{tickformat:'.0%',range:[.3,1]},shapes:[{type:'line',x0:2010,x1:2025,y0:.5,y1:.5,line:{color:'#cdc5b1',dash:'dot',width:1}}]}),cfg);
-}
-
-let pickYear=2024;
-function renderCountry(){
-  const ys=Object.keys(D.country).map(Number), names=T('countries'), u=T('unit');
-  const order=D.countryKeys.map((k,i)=>[k,Object.values(D.country).reduce((a,r)=>a+r[i],0),i]).sort((a,b)=>b[1]-a[1]);
-  const top=6;
-  const tr=order.slice(0,top).map(([k,,i],j)=>({type:'bar',name:names[k],x:ys,y:ys.map(y=>D.country[y][i]),marker:{color:intlRamp[j]},hovertemplate:`${names[k]} %{y}${u}<extra></extra>`}));
-  tr.push({type:'bar',name:T('others'),x:ys,y:ys.map(y=>order.slice(top).reduce((a,[,,i])=>a+D.country[y][i],0)),marker:{color:intlRamp[6]},hovertemplate:`${T('others')} %{y}${u}<extra></extra>`});
-  Plotly.react('cCountry',tr,L({barmode:'stack',bargap:.25,xaxis:{dtick:1},legend:{orientation:'h',y:1.2,x:0,font:{size:11},traceorder:'normal'}}),cfg);
-  const seg=document.getElementById('segCountry');
-  seg.innerHTML=ys.map(y=>`<button data-y="${y}" class="${y===pickYear?'on':''}">${y}</button>`).join('');
-  const rows=D.countryKeys.map((k,i)=>[k,D.country[pickYear][i]]).filter(r=>r[1]>0).sort((a,b)=>b[1]-a[1]);
-  const tot=rows.reduce((a,r)=>a+r[1],0);
-  const col=k=>{const j=order.findIndex(o=>o[0]===k); return j<top?intlRamp[j]:intlRamp[6];};
-  document.getElementById('donutTitle').textContent=T('donut')(pickYear);
-  Plotly.react('cDonut',[{type:'pie',hole:.6,labels:rows.map(r=>names[r[0]]),values:rows.map(r=>r[1]),sort:false,direction:'clockwise',marker:{colors:rows.map(r=>col(r[0]))},textinfo:'none',hovertemplate:`%{label} %{value}${u} (%{percent})<extra></extra>`}],
-    Object.assign(base(),{margin:{l:0,r:0,t:4,b:4},showlegend:false,annotations:[{text:`<b style="font-size:24px">${tot}</b><br><span style="font-size:11px;color:#77736b">${pickYear}</span>`,showarrow:false}]}),cfg);
-  document.getElementById('tCountry').innerHTML=`<tr><th>${T('country')}</th><th style="width:42%"></th><th style="text-align:right">${LANG==='ko'?'명':'n'}</th><th style="text-align:right">${T('share')}</th></tr>`+
-    rows.map(r=>`<tr><td>${names[r[0]]}</td><td><div class="bar-in"><i style="width:${100*r[1]/rows[0][1]}%;background:${col(r[0])}"></i></div></td><td class="n">${r[1]}</td><td class="n">${pct(r[1],tot)}</td></tr>`).join('');
-}
-
-function stacked100(id,labels,data,colors){
-  const ys=Object.keys(data), u=T('unit');
-  const tr=labels.map((lab,i)=>({type:'bar',orientation:'h',name:lab,y:ys,x:ys.map(y=>data[y][i]/data[y].reduce((a,b)=>a+b,0)),customdata:ys.map(y=>data[y][i]),marker:{color:colors[i]},hovertemplate:`${lab}: %{customdata}${u} (%{x:.1%})<extra></extra>`}));
-  Plotly.react(id,tr,L({barmode:'stack',bargap:.3,hovermode:'y unified',xaxis:{tickformat:'.0%',range:[0,1],gridcolor:'#ebe5d6'},yaxis:{type:'category',autorange:'reversed',gridcolor:'rgba(0,0,0,0)'},margin:{l:42,r:12,t:10,b:30},legend:{orientation:'h',y:1.24,x:0,font:{size:11},traceorder:'normal'}}),cfg);
-}
-function renderWho(){
-  const domRamp=['#0b5e41','#0f9d6b','#4cbf8f','#9fdcc0','#f0c28f','#e08a3c','#a8551a'];
-  const intlR=['#2c2073','#4a3fd4','#7f78e4','#b9b3f0','#f0c28f','#e08a3c','#a8551a'];
-  stacked100('cAgeDom',T('ageBands'),D.ageDom,domRamp);
-  stacked100('cAgeIntl',T('ageBands'),D.ageIntl,intlR);
-  stacked100('cReason',T('reasons'),D.reason,[C.ink,C.hl,'#b5ad9a']);
-}
-
-function renderTimeline(){
-  document.getElementById('timeline').innerHTML=T('tl').map(([d,t,x])=>`<li><div class="d">${d}</div><div><div class="t">${t}</div><div class="x">${x}</div></div></li>`).join('');
-}
-
-function renderAll(){renderText();renderKpis();renderTrend();renderSex();renderCountry();renderWho();renderTimeline();}
-
-/* ===================================================================== CSV */
-function downloadCsv(){
-  const ko=LANG==='ko', names=T('countries');
-  const rows=[[ko?'구분':'table',ko?'연도':'year',ko?'항목':'item',ko?'값':'value']];
-  D.years.forEach((y,i)=>{rows.push(['yearly',y,T('dom'),D.dom[i]]);rows.push(['yearly',y,T('intl'),D.intl[i]]);});
-  D.sex.forEach(r=>{rows.push(['sex',r[0],`${T('dom')}-${T('male')}`,r[1]],['sex',r[0],`${T('dom')}-${T('female')}`,r[2]],['sex',r[0],`${T('intl')}-${T('male')}`,r[3]],['sex',r[0],`${T('intl')}-${T('female')}`,r[4]]);});
-  Object.entries(D.country).forEach(([y,v])=>v.forEach((n,i)=>rows.push(['country',y,names[D.countryKeys[i]],n])));
-  Object.entries(D.ageDom).forEach(([y,v])=>v.forEach((n,i)=>rows.push(['age',y,`${T('dom')}-${T('ageBands')[i]}`,n])));
-  Object.entries(D.ageIntl).forEach(([y,v])=>v.forEach((n,i)=>rows.push(['age',y,`${T('intl')}-${T('ageBands')[i]}`,n])));
-  Object.entries(D.reason).forEach(([y,v])=>v.forEach((n,i)=>rows.push(['reason',y,T('reasons')[i],n])));
-  const csv='\ufeff'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download=T('csv'); a.click(); URL.revokeObjectURL(a.href);
-}
-
-/* ===================================================================== EVENTS */
-document.getElementById('lang').addEventListener('click',e=>{const l=e.target.dataset.l; if(!l||l===LANG) return; LANG=l; localStorage.setItem('adoptLang',l); const u=new URL(location); u.searchParams.set('lang',l); history.replaceState(null,'',u); renderAll();});
-document.getElementById('segTrend').addEventListener('click',e=>{if(!e.target.dataset.v) return; trendMode=e.target.dataset.v; [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target)); renderTrend();});
-document.getElementById('segCountry').addEventListener('click',e=>{if(!e.target.dataset.y) return; pickYear=+e.target.dataset.y; renderCountry();});
-document.getElementById('dl').addEventListener('click',downloadCsv);
-const navLinks=[...document.querySelectorAll('#secnav a')];
-const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){navLinks.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id));}}),{rootMargin:'-40% 0px -55% 0px'});
-['overview','trend','sex','where','who','policy','sources'].forEach(id=>{const el=document.getElementById(id); if(el) io.observe(el);});
-
-renderAll();
-</script>
+<footer id="ftr"></footer>
+<script src="common.js"></script>
 </body>
 </html>

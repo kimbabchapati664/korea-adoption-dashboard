@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About HJ Kim, and how to support this work | Korean Roots Finder</title>
+<meta name="description" content="HJ Kim lives in Seoul and volunteers to help Korean adoptees take the first steps of a birth-family search. Support the work through PayPal or crypto (MetaMask).">
+<meta property="og:title" content="About HJ Kim · Korean Roots Finder">
+<meta property="og:description" content="Why a Seoul local started volunteering for Korean adoptees, and how you can support it.">
+<meta property="og:image" content="https://korea-adoption-dashboard.vercel.app/hj-kim.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121212'/%3E%3Ccircle cx='32' cy='26' r='10' fill='%23c5bcf2'/%3E%3Cpath d='M32 36v16M24 46l8 6 8-6' stroke='%2391d8b2' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="about">
+<header id="hdr"></header>
+
+<main class="wrap">
+  <section style="padding-top:30px">
+    <div class="about">
+      <div>
+        <div class="portrait"><img src="hj-kim.jpg" alt="Portrait of HJ Kim"></div>
+        <p class="muted" style="font-size:.85rem;margin-top:12px">HJ Kim (김현정) · Seoul, Korea</p>
+      </div>
+      <div>
+        <div class="kicker">About me</div>
+        <h1 style="font-size:clamp(2.2rem,5vw,3.6rem);margin:12px 0 18px">Hi, I'm HJ Kim.</h1>
+        <p class="quote">"Nobody should need money, or Korean, to ask where they came from."</p>
+        <p class="lede">I live in Seoul and run a small company here called All Things Asia. This site, and the time I give to adoptees, is volunteer work.</p>
+        <p>More than 168,000 Korean children were sent overseas for adoption. Many of them are adults now, coming back with a thin folder of papers in a language they never had the chance to learn, into a system that confuses even Koreans.</p>
+        <p>I speak the language, I can pick up the phone, and I know how the offices here work. For me, reading a document or making a call takes an hour. For someone searching from Minnesota or Stockholm, the same thing can take months, or never happen at all.</p>
+        <p>So I started doing it for free, and I built this site so the first steps are open to everyone, whether or not we ever meet.</p>
+        <div class="btns"><a class="btn btn-p" href="#donate">Support this work</a><a class="btn btn-s" href="https://forms.gle/z9WPkE3ZgyWG4sxg8" target="_blank" rel="noopener">Contact me</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="kicker">How I work</div><h2>Three promises</h2></div>
+    <div class="grid g3 pastel">
+      <div class="card"><h3>Free comes first</h3><p>Your records request, your file review and your police DNA registration are free through NCRC and the Korean police. I will always point you there first. I will never sell you access to your own file.</p></div>
+      <div class="card"><h3>Honest about the odds</h3><p>Many files are thin, and some are wrong. I will tell you plainly what your paperwork does and does not make possible, before you spend anything or get your hopes up.</p></div>
+      <div class="card"><h3>Your story stays yours</h3><p>Nothing identifiable about you or your birth family goes on this site or anywhere else without your explicit permission.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="kicker">Where I can help</div><h2>As a volunteer, when time allows</h2></div>
+    <div class="grid g4">
+      <div class="card"><h3>Reading your papers</h3><p>Going through Korean documents with you and explaining what they actually say.</p></div>
+      <div class="card"><h3>Calls in Korean</h3><p>Phoning NCRC, an agency, a hospital or a children's home when English is not getting you anywhere.</p></div>
+      <div class="card"><h3>Your first request</h3><p>Helping you prepare the Adoption Information Disclosure Request so nothing is missed.</p></div>
+      <div class="card"><h3>The right people</h3><p>Pointing you to the adoptee-led groups and services that fit your situation.</p></div>
+    </div>
+  </section>
+
+  <section id="donate">
+    <div class="sechead"><div class="kicker">Donate</div><h2>Keep this free for the next person</h2>
+      <p>Donations keep this site online and cover the real costs of volunteering in Korea: transport to NCRC, the records archive in Goyang and hometowns, translation, and phone calls. Any amount helps.</p></div>
+    <div class="grid g2">
+      <div class="card donate-card" style="background:var(--sky);border-color:transparent">
+        <div class="kicker" style="color:var(--sky-ink)">Card or PayPal balance</div>
+        <h3>PayPal</h3>
+        <p style="margin:0">The easiest way from almost any country. You do not need a PayPal account to pay by card.</p>
+        <div id="paypalBox"></div>
+      </div>
+      <div class="card donate-card" style="background:var(--lilac);border-color:transparent">
+        <div class="kicker" style="color:var(--lilac-ink)">MetaMask · any EVM wallet</div>
+        <h3>Crypto</h3>
+        <p style="margin:0">Send ETH or stablecoins to the address below. The same address works on Ethereum and EVM networks like Base, Arbitrum, Optimism and Polygon. Always double-check the network before you send.</p>
+        <div id="cryptoBox"></div>
+      </div>
+    </div>
+    <div class="note lemon"><b>Please note.</b> This is personal support for volunteer work, not a registered charity, so donations are not tax-deductible. Never send a seed phrase or private key to anyone, including me. I will only ever ask for a public address.</div>
+  </section>
+</main>
+
+<footer id="ftr"></footer>
+<script src="common.js"></script>
+<script>
+/* ============================================================
+   DONATION SETTINGS. Fill these in, nothing else needs to change.
+   paypal: your PayPal.me link, e.g. 'https://paypal.me/yourname'
+   evm:    your MetaMask public address, starts with 0x (42 characters)
+   ============================================================ */
+const DONATE = {
+  paypal: '',
+  evm: ''
+};
+
+(function(){
+  const pp=document.getElementById('paypalBox'), cb=document.getElementById('cryptoBox');
+  if(/^https:\/\/(www\.)?(paypal\.me|paypal\.com)\//i.test(DONATE.paypal)){
+    pp.innerHTML=`<a class="btn btn-p" href="${esc(DONATE.paypal)}" target="_blank" rel="noopener">Donate with PayPal →</a>`;
+  } else {
+    pp.innerHTML='<div class="soon"><b>Coming soon.</b> The PayPal link is being set up. In the meantime, <a href="https://forms.gle/z9WPkE3ZgyWG4sxg8" target="_blank" rel="noopener">send me a message</a>.</div>';
+  }
+  if(/^0x[a-fA-F0-9]{40}$/.test(DONATE.evm)){
+    const a=DONATE.evm;
+    cb.innerHTML=`<div class="addr"><span style="flex:1">${a}</span><button class="btn btn-s btn-sm" id="copyAddr">Copy</button></div>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><div class="qr" id="qr"></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><button class="btn btn-p" id="mm">Send with MetaMask</button><span class="muted" style="font-size:.8rem">Opens your wallet to confirm. Nothing is sent until you approve it.</span></div></div>`;
+    document.getElementById('copyAddr').onclick=()=>copyText(a,'Address copied');
+    const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+    s.onload=()=>new QRCode(document.getElementById('qr'),{text:a,width:128,height:128});
+    document.head.appendChild(s);
+    document.getElementById('mm').onclick=async()=>{
+      if(!window.ethereum){ toast('MetaMask not found. Copy the address instead.'); return; }
+      try{
+        const [from]=await window.ethereum.request({method:'eth_requestAccounts'});
+        const amt=prompt('How much ETH would you like to send? (e.g. 0.01)','0.01'); if(!amt) return;
+        const n=Number(amt); if(!(n>0)){ toast('Please enter a valid amount'); return; }
+        const wei=BigInt(Math.round(n*1e6))*10n**12n;
+        await window.ethereum.request({method:'eth_sendTransaction',params:[{from,to:a,value:'0x'+wei.toString(16)}]});
+        toast('Thank you! Transaction sent.');
+      }catch(e){ toast(e && e.code===4001?'Cancelled':'Could not send: '+(e.message||e)); }
+    };
+  } else {
+    cb.innerHTML='<div class="soon"><b>Coming soon.</b> The wallet address is being set up. Please only send to an address shown on this page.</div>';
+  }
+})();
+</script>
+</body>
+</html>

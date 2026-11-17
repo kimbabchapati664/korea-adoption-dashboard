@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roots Finder: what do your adoption papers mean? | Korean Roots Finder</title>
+<meta name="description" content="Tick what you have from your Korean adoption (case number, Korean name, baby photo, place found, orphan register) or paste text from your papers. Get what each item means, the Korean search words, and a personal roadmap. Runs in your browser; nothing is uploaded.">
+<meta property="og:title" content="Roots Finder for Korean adoptees">
+<meta property="og:description" content="What does your case number, Korean name or baby photo actually mean for your search? Find out in two minutes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121212'/%3E%3Ccircle cx='32' cy='26' r='10' fill='%23c5bcf2'/%3E%3Cpath d='M32 36v16M24 46l8 6 8-6' stroke='%2391d8b2' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+@media print{ .engine,.privacy,#pasteBox{display:none!important} .sheet{display:block!important;font-size:12pt} .sheet h2{font-size:20pt} .sheet table{width:100%;border-collapse:collapse} .sheet td,.sheet th{border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top} }
+select.sel{width:100%;border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;font:inherit;font-size:.92rem;background:#fff}
+</style>
+</head>
+<body data-page="finder">
+<header id="hdr"></header>
+
+<main class="wrap">
+  <div class="hero sm">
+    <div class="kicker">Roots Finder · beta</div>
+    <h1>Tell it what you have. It tells you what it means.</h1>
+    <p class="lede">Tick what is in your folder, or paste the text from your papers and let the Finder pick things out. You get what each item means for your search, the Korean words to search with, and a roadmap in the right order.</p>
+  </div>
+
+  <div class="privacy no-print"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:2px"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><div><b>Private by design.</b> The Finder runs entirely in your browser. Nothing you type or tick is sent anywhere or saved. Close the tab and it is gone. It is a rule-based guide built from official sources, not legal advice.</div></div>
+
+  <div class="engine">
+    <!-- ======================= INPUT ======================= -->
+    <div>
+      <div class="panel" id="pasteBox" style="margin-bottom:14px">
+        <div class="kicker">Option A</div>
+        <h3 style="margin-top:6px">Paste text from your papers</h3>
+        <p class="muted" style="font-size:.88rem">Type or paste anything: a line from your social history, a name, a number, a place. The Finder looks for case numbers, dates, Korean names, agencies, cities and keywords like "found" or "foster".</p>
+        <textarea class="paste" id="paste" placeholder="Example:&#10;Holt Children's Services, case no. K-85-1234&#10;Korean name: 김민지 (Kim Min Ji)&#10;Born 1985.03.02 at a clinic in Taegu&#10;Placed with a foster mother until departure"></textarea>
+        <div class="btns" style="margin-top:12px"><button class="btn btn-p btn-sm" id="scan">Scan my text</button><button class="btn btn-s btn-sm" id="example">Try an example</button><button class="btn btn-s btn-sm" id="clearAll">Clear everything</button></div>
+        <div class="chips" id="found"></div>
+      </div>
+
+      <div class="panel">
+        <div class="kicker">Option B</div>
+        <h3 style="margin-top:6px">Tick what you have</h3>
+        <p class="muted" style="font-size:.88rem">Add the detail if you want it in your summary. It stays on this device.</p>
+        <div id="checklist"></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <div class="kicker">Your situation</div>
+        <h3 style="margin-top:6px">A few quick questions</h3>
+        <div class="group">
+          <div class="gh">Where do you live now?</div>
+          <select class="sel" id="country"></select>
+        </div>
+        <div id="situation"></div>
+      </div>
+    </div>
+
+    <!-- ======================= OUTPUT ======================= -->
+    <div class="sticky" id="out">
+      <div class="panel">
+        <div class="kicker">Your results</div>
+        <div class="console" id="console" aria-live="polite"><span class="c-dim">Roots Finder ready.</span>
+<span class="c-dim">Tick an item or paste text to begin.</span></div>
+        <div class="meter"><div class="ring" id="ring"><b id="score">0</b></div><div><div class="m-t" id="level">Nothing yet</div><div class="m-s" id="levelS">Every search starts somewhere. Tick what you have.</div></div></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h3>Your roadmap</h3>
+        <p class="muted" style="font-size:.85rem;margin-bottom:4px">In this order. Each step links to where you sign up.</p>
+        <ol class="road" id="road"><li><b>Start with step 1 of the guide</b>Gather your papers, then come back and tick what you found. <a href="guide.html">Open the guide →</a></li></ol>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h3>What your items mean</h3>
+        <div id="means"><p class="empty">Tick an item to see what it means for your search.</p></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h3>Korean search words</h3>
+        <p class="muted" style="font-size:.85rem">Tap to copy. Use them on the NCRC boards, in emails, and in Korean search engines like Naver.</p>
+        <div class="kw" id="kws" style="display:flex;flex-wrap:wrap;gap:6px"><span class="empty">Your words will appear here.</span></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h3>Take it with you</h3>
+        <p class="muted" style="font-size:.85rem">A short message in Korean you can send to NCRC or G.O.A.'L, and a printable bilingual summary.</p>
+        <div class="btns" style="margin-top:8px"><button class="btn btn-p btn-sm" id="copyKo">Copy Korean message</button><button class="btn btn-s btn-sm" id="print">Print / save PDF</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet" id="sheet"></div>
+</main>
+
+<footer id="ftr"></footer>
+<script src="common.js"></script>
+<script>
+/* ============================================================ KNOWLEDGE BASE
+   Built from: NCRC / kadoption.or.kr, G.O.A.'L, 325KAMRA, Adoptee Hub, Truth and
+   Reconciliation Commission findings (2025). Rule-based, runs locally. */
+const L = {
+  disclosure:['https://www.kadoption.or.kr/home/eng/main.do','File the request at kadoption.or.kr'],
+  goalDir:['https://goal.or.kr/adoption-agency-information','G.O.A.\'L agency directory'],
+  goal:['https://goal.or.kr/birth-family-search','G.O.A.\'L birth family search'],
+  boardA:['https://www.kadoption.or.kr/home/eng/peopleSearch/findAdoptee.do?menuPos=18','NCRC adoptee search board'],
+  boardF:['https://www.kadoption.or.kr/home/eng/peopleSearch/findFamily.do?menuPos=18','NCRC families-searching board'],
+  hope:['https://adopteehub.org/services/hope_registry_adoptees','Hope Registry'],
+  kamra:['https://www.325kamra.org/korean-adoptees','325KAMRA free kit'],
+  ftdna:['https://www.familytreedna.com/','FamilyTreeDNA'],
+  gedmatch:['https://www.gedmatch.com/','GEDmatch'],
+  myheritage:['https://www.myheritage.com/dna','MyHeritage DNA'],
+  paperslip:['https://www.paperslip.org/','Paperslip'],
+  koroot:['https://koroot.online/about','KoRoot'],
+  ikaa:['https://www.ikaa.org/','IKAA associations'],
+  a4j:['https://www.adopteesforjustice.org/federal-legislation','Adoptees For Justice'],
+  dual:['https://goal.or.kr/dual-citizenship','G.O.A.\'L citizenship guide'],
+  f4:['https://goal.or.kr/f4-visa','G.O.A.\'L F-4 guide'],
+  trc:['https://www.jinsil.go.kr/','Truth and Reconciliation Commission']
+};
+const lk = k => `<a href="${L[k][0]}" target="_blank" rel="noopener">${L[k][1]} →</a>`;
+
+const GROUPS = [
+ ['papers','Papers from your adoption'],
+ ['names','Names & dates'],
+ ['place','Where you came from'],
+ ['people','People who cared for you'],
+ ['photos','Photos, letters & objects'],
+ ['dna','DNA']
+];
+
+const ITEMS = [
+ {id:'agency',g:'papers',w:10,t:'Name of the adoption agency',h:'Holt, Eastern, KSS, Korea Welfare Services, or an agency in your adoptive country',ko:'입양기관',ph:'e.g. Holt Children\'s Services',
+  m:'Tells you which Korean agency created your file. Since 19 July 2025 every agency file is held by NCRC, so you request it from NCRC, not from the agency. If your papers only name a foreign agency (Holt International, WACAP, Spence-Chapin…), G.O.A.\'L\'s directory maps it to the Korean one.',
+  kw:[['홀트아동복지회','Holt Children\'s Services'],['동방사회복지회','Eastern Social Welfare Society'],['한국사회봉사회','Korea Social Service'],['대한사회복지회','Korea Welfare Services']],links:['goalDir']},
+ {id:'caseno',g:'papers',w:18,t:'A case or file number from the agency',h:'Any reference number on agency letters, e.g. from Holt or Eastern',ko:'입양기관 케이스 번호',ph:'Copy it exactly, with letters and dashes',
+  m:'The agency\'s internal reference for your folder. NCRC holds about 260,000 volumes of records; this number is the fastest way to find yours. Copy it exactly as printed onto your disclosure request. Formats differ by agency and era, so don\'t "correct" it.',
+  kw:[['케이스 번호','case number'],['입양 기록','adoption records']],links:['disclosure']},
+ {id:'social',g:'papers',w:6,t:'A "social history" or background report',h:'The agency\'s description of your birth family and why you were placed',ko:'입양 배경 보고서',ph:'Key facts it states',
+  m:'The agency\'s narrative of your origins. Treat it as a starting point, not the truth: Korea\'s Truth and Reconciliation Commission found in 2025 that some records were inaccurate or falsified. Compare it line by line with what NCRC sends you after your disclosure request.',
+  kw:[['입양 사유','reason for adoption'],['배경 정보','background information']],links:['paperslip']},
+ {id:'register',g:'papers',w:3,t:'An orphan family register (hojuk)',h:'A Korean family register that lists you as the head of your own family',ko:'고아호적',ph:'Name and date written on it',
+  m:'An "orphan register" was created so a child could be adopted as an orphan with no known parents. The Truth and Reconciliation Commission found such registers were sometimes falsified, so "parents unknown" on this document does not prove your parents were unknown. Keep searching through DNA and the boards.',
+  kw:[['고아호적','orphan family register'],['호적등본','family register copy'],['가족관계등록부','family relations register']],links:['trc']},
+ {id:'passport',g:'papers',w:3,t:'Your Korean passport or travel document',h:'Issued for your flight out of Korea',ko:'여권',ph:'Name and birth date as printed',
+  m:'Shows the name and date of birth Korea recorded for you at departure, and when you left. Useful to cross-check your file and as supporting paperwork for F-4 visa or nationality applications.',
+  kw:[['여권','passport'],['출국일','departure date']],links:['f4']},
+ {id:'arrival',g:'papers',w:3,t:'Arrival date, flight or escort details',h:'Airport, date, the escort who brought you',ko:'입국 날짜 / 에스코트',ph:'e.g. arrived JFK, 12 June 1986',
+  m:'Confirms your timeline and helps NCRC match your folder. Escort letters sometimes include names or notes that are not in the main file.',kw:[['출국 날짜','departure date']],links:[]},
+ {id:'decree',g:'papers',w:2,t:'Adoption decree or court papers from your adoptive country',h:'The legal adoption order abroad',ko:'입양 판결문',ph:'Court and date',
+  m:'Legal proof of your adoption abroad. It matters most for citizenship: some intercountry adoptees were never naturalised by their adoptive parents. Keep it with your search folder.',kw:[],links:['a4j']},
+ {id:'medical',g:'papers',w:5,t:'Medical or intake exam records',h:'Birth weight, health checks, vaccinations',ko:'의료 기록',ph:'Hospital or clinic named?',
+  m:'Often name a hospital, clinic or doctor, and give a birth weight. A named hospital is a place-based lead; birth weight can help confirm a match.',kw:[['출생 체중','birth weight']],links:[]},
+
+ {id:'koname',g:'names',w:10,t:'A Korean name from before your adoption',h:'Written in Hangul or in English letters',ko:'입양 전 이름',ph:'In Hangul if you have it, e.g. 김민지',
+  m:'Your pre-adoption name. It may have been given by the agency, an orphanage or the police rather than your birth parents, so treat it as a lead, not proof. Search the NCRC boards with it in Hangul. Romanised spellings vary (Kim/Gim, Lee/Yi/Rhee, Park/Pak).',
+  kw:[['입양 전 이름','pre-adoption name']],links:['boardF']},
+ {id:'dob',g:'names',w:6,t:'A date of birth',h:'Even if it might be estimated',ko:'생년월일',ph:'YYYY-MM-DD',
+  m:'For children who were found, birth dates were often estimated. If your papers say "estimated" or give only a year, search a range of dates, not one day. The disclosure request can return your recorded date and time of birth.',
+  kw:[['생년월일','date of birth'],['추정 생년월일','estimated date of birth']],links:['boardF']},
+ {id:'birthtime',g:'names',w:5,t:'A time of birth',h:'Hours and minutes on any document',ko:'출생 시간',ph:'e.g. 03:40',
+  m:'A recorded time of birth suggests someone was present who knew it: a hospital, a midwife or a parent. That makes it more likely your file holds real birth information.',kw:[['출생 시간','time of birth']],links:[]},
+ {id:'parents',g:'names',w:18,t:'Birth parent names or ages',h:'Even partial, misspelled or only a surname',ko:'친생부모 이름 / 나이',ph:'As written on your papers',
+  m:'The strongest lead there is. NCRC releases birth-parent identity only with their consent, but their ages at the time are released without it. Names in old files are often romanised badly; ask a Korean speaker to suggest the likely Hangul.',
+  kw:[['친생모','birth mother'],['친생부','birth father'],['생모','birth mother (common word)'],['친가족 찾기','birth family search']],links:['disclosure','goal']},
+
+ {id:'birthplace',g:'place',w:8,t:'A city or district where you were born',h:'Seoul, Busan, Daegu… or an old spelling like Pusan or Taegu',ko:'출생지',ph:'e.g. Daegu, Jung-gu',
+  m:'Narrows your search to a region. Districts (gu/gun) matter more than cities. Old papers use older spellings: Pusan = Busan, Taegu = Daegu, Inchon = Incheon, Kwangju = Gwangju, Taejon = Daejeon.',kw:[['출생지','place of birth']],links:['goal']},
+ {id:'hospital',g:'place',w:10,t:'A hospital, clinic or midwife',h:'Where you were born or first examined',ko:'출생 병원',ph:'Name as written',
+  m:'A strong place-based lead: it suggests a recorded birth. Many small clinics have closed or changed names, and old records may not survive, so ask G.O.A.\'L to help check before you travel.',
+  kw:[['출생 병원','birth hospital'],['산부인과','maternity clinic'],['조산원','midwife clinic']],links:['goal']},
+ {id:'found',g:'place',w:8,t:'A place where you were found',h:'A police box, station, market, doorstep…',ko:'발견 장소',ph:'Place and date if known',
+  m:'If you were found, your file most likely has no birth-parent identity. This is exactly the situation the free Korean police DNA registration was built for, because birth families who left a child often register there. The place itself is also a lead: some families search near where they left a child.',
+  kw:[['발견 장소','place found'],['기아','foundling'],['유전자 등록','DNA registration'],['실종아동','missing child']],links:['disclosure','boardF']},
+
+ {id:'foster',g:'people',w:6,t:'A foster mother or foster family',h:'Many babies lived with one before departure',ko:'위탁모',ph:'Name or area if known',
+  m:'Many children spent weeks or months with a foster mother. Foster families sometimes remember details, and the agency file may record who they were. Ask about them in your file review.',kw:[['위탁모','foster mother'],['위탁가정','foster family']],links:[]},
+ {id:'orphanage',g:'people',w:6,t:'An orphanage or children\'s home',h:'The name of an institution you stayed at',ko:'보육원 / 영아원',ph:'Name and city',
+  m:'Institutions kept intake records: when you arrived and who brought you. Some have closed or merged. The name plus city is enough for G.O.A.\'L to check whether it still exists.',kw:[['보육원','children\'s home'],['영아원','infant home'],['입소 기록','intake record']],links:['goal']},
+
+ {id:'photos',g:'photos',w:6,t:'Baby or referral photos',h:'Photos sent to your adoptive family',ko:'아기 때 사진',ph:'How many, and where taken?',
+  m:'Usually taken by the agency or a foster mother. A photo can help a birth family recognise you on a search board, and the background (a room, clothes, a person holding you) can be a clue. Recognising a baby by face is unreliable, so always pair photos with DNA.',kw:[['어릴 적 사진','childhood photo'],['입양 전 사진','pre-adoption photo']],links:['boardA']},
+ {id:'objects',g:'photos',w:12,t:'A letter, note or item from your birth family',h:'Anything that came with you',ko:'친가족의 편지 / 물건',ph:'What it is',
+  m:'Rare and powerful. Handwriting, names, places or even the type of paper can be leads. Have it translated by someone you trust, keep the original safe, and bring a copy to your file review.',kw:[['편지','letter'],['쪽지','note']],links:['goal']},
+
+ {id:'dnadone',g:'dna',w:14,t:'I have already taken a DNA test',h:'23andMe, Ancestry, MyHeritage, FamilyTreeDNA…',ko:'DNA 검사',ph:'Which company?',
+  m:'Download your raw data and upload it everywhere that accepts it: FamilyTreeDNA (the database 325KAMRA uses, where Korean birth-family samples land), GEDmatch and MyHeritage. One test, many databases.',kw:[['유전자 검사','DNA test']],links:['ftdna','gedmatch','myheritage']},
+ {id:'mixed',g:'dna',w:6,t:'I may be of mixed heritage',h:'e.g. a non-Korean birth father',ko:'혼혈',ph:'',
+  m:'Good news for DNA: adoptees with an American birth father tend to find many more matches, simply because testing rates in the US are much higher. Large consumer databases are worth it for you.',kw:[],links:['kamra']}
+];
+
+const SITUATION = [
+ {id:'filed',t:'I have already filed an Adoption Information Disclosure Request'},
+ {id:'under18',t:'I am under 18'},
+ {id:'private',t:'I was adopted privately, with no agency, or under the Civil Act'},
+ {id:'visit',t:'I am planning a trip to Korea in the next few months'},
+ {id:'citizen',t:'I am not sure my citizenship in my adoptive country was ever completed'},
+ {id:'support',t:'I would like emotional support or to meet other adoptees'}
+];
+
+const COUNTRIES = [['','Choose…',''],['US','United States','미국'],['CA','Canada','캐나다'],['SE','Sweden','스웨덴'],['DK','Denmark','덴마크'],['NO','Norway','노르웨이'],['NL','Netherlands','네덜란드'],['BE','Belgium','벨기에'],['FR','France','프랑스'],['DE','Germany','독일'],['CH','Switzerland','스위스'],['LU','Luxembourg','룩셈부르크'],['IT','Italy','이탈리아'],['GB','United Kingdom','영국'],['AU','Australia','호주'],['NZ','New Zealand','뉴질랜드'],['KR','South Korea','한국'],['XX','Somewhere else','해외']];
+
+const CITY = {seoul:'서울',busan:'부산',pusan:'부산',daegu:'대구',taegu:'대구',incheon:'인천',inchon:'인천',gwangju:'광주',kwangju:'광주',daejeon:'대전',taejon:'대전',taejeon:'대전',ulsan:'울산',suwon:'수원',jeonju:'전주',chonju:'전주',cheongju:'청주',chongju:'청주',chuncheon:'춘천',chunchon:'춘천',masan:'마산',mokpo:'목포',pohang:'포항',gyeongju:'경주',kyongju:'경주',kyungju:'경주',jeju:'제주',cheju:'제주',uijeongbu:'의정부',uijongbu:'의정부',anyang:'안양',bucheon:'부천',puchon:'부천',seongnam:'성남',songnam:'성남',wonju:'원주',gangneung:'강릉',kangnung:'강릉',iri:'이리',iksan:'익산',gunsan:'군산',kunsan:'군산',yeosu:'여수',yosu:'여수',suncheon:'순천',sunchon:'순천',jinju:'진주',chinju:'진주',gimhae:'김해',kimhae:'김해',changwon:'창원',andong:'안동',gumi:'구미',kumi:'구미',pyeongtaek:'평택',pyongtaek:'평택',dongducheon:'동두천',tongduchon:'동두천',gyeonggi:'경기도',kyunggi:'경기도',kyonggi:'경기도',gangwon:'강원도',kangwon:'강원도',chungcheong:'충청도',chungchong:'충청도',jeolla:'전라도',cholla:'전라도',chulla:'전라도',gyeongsang:'경상도',kyongsang:'경상도',kyungsang:'경상도'};
+const AGENCIES = [[/holt/i,'홀트아동복지회','Holt'],[/eastern/i,'동방사회복지회','Eastern'],[/korea\s*social\s*service|\bkss\b/i,'한국사회봉사회','KSS'],[/korea\s*welfare\s*services?|\bkws\b/i,'대한사회복지회','Korea Welfare Services'],[/홀트/,'홀트아동복지회','Holt'],[/동방/,'동방사회복지회','Eastern'],[/한국사회봉사회/,'한국사회봉사회','KSS'],[/대한사회복지회/,'대한사회복지회','Korea Welfare Services'],[/wacap|bethany|spence|dillon|lutheran|children'?s home society|adoptionscentrum|danadopt|wereldkinderen|rayon de soleil/i,null,'foreign agency']];
+
+/* ============================================================ STATE */
+const S = {on:{}, det:{}, auto:{}, sit:{}, country:''};
+
+/* ============================================================ BUILD UI */
+function buildUI(){
+  const cl=document.getElementById('checklist');
+  cl.innerHTML=GROUPS.map(([g,gl])=>`<div class="group"><div class="gh">${gl}</div>${ITEMS.filter(i=>i.g===g).map(i=>`
+    <div class="item" id="it-${i.id}"><label class="row"><input type="checkbox" data-id="${i.id}"><div><div class="t">${i.t}<span class="auto" style="display:none">found in text</span></div><div class="h">${i.h}</div></div></label>
+    ${i.ph?`<div class="det"><input type="text" data-det="${i.id}" placeholder="${esc(i.ph)}" autocomplete="off"></div>`:''}</div>`).join('')}</div>`).join('');
+  document.getElementById('situation').innerHTML=SITUATION.map(s=>`<div class="item" id="si-${s.id}"><label class="row"><input type="checkbox" data-sit="${s.id}"><div><div class="t">${s.t}</div></div></label></div>`).join('');
+  document.getElementById('country').innerHTML=COUNTRIES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  cl.addEventListener('change',e=>{const id=e.target.dataset.id; if(!id) return; S.on[id]=e.target.checked; if(!e.target.checked) S.auto[id]=false; sync(); run(id);});
+  cl.addEventListener('input',e=>{const id=e.target.dataset.det; if(!id) return; S.det[id]=e.target.value; if(e.target.value&&!S.on[id]){S.on[id]=true;} sync(); run(null,true);});
+  document.getElementById('situation').addEventListener('change',e=>{const id=e.target.dataset.sit; if(!id) return; S.sit[id]=e.target.checked; document.getElementById('si-'+id).classList.toggle('on',e.target.checked); run('sit:'+id);});
+  document.getElementById('country').addEventListener('change',e=>{S.country=e.target.value; run('country');});
+}
+function sync(){
+  ITEMS.forEach(i=>{
+    const box=document.getElementById('it-'+i.id), cb=box.querySelector('input[type=checkbox]'), d=box.querySelector('[data-det]');
+    cb.checked=!!S.on[i.id]; box.classList.toggle('on',!!S.on[i.id]);
+    box.querySelector('.auto').style.display=S.auto[i.id]&&S.on[i.id]?'inline-block':'none';
+    if(d && d.value!==(S.det[i.id]||'')) d.value=S.det[i.id]||'';
+  });
+}
+
+/* ============================================================ TEXT SCANNER */
+function scanText(txt){
+  const hits=[]; const set=(id,val,label)=>{ if(!S.on[id]) {S.on[id]=true; S.auto[id]=true;} if(val && !S.det[id]) S.det[id]=val; hits.push(label); };
+  if(!txt.trim()) return hits;
+  for(const [re,ko,en] of AGENCIES){ const m=txt.match(re); if(m){ set('agency', ko?`${en} (${ko})`:m[0], `Agency: ${ko?en:m[0]}`); break; } }
+  const cn=txt.match(/(?:case|file|ref(?:erence)?|no\.?|number|번호)\s*[:#.]?\s*([A-Z]{0,3}[- ]?\d[\d\-\/ ]{2,14}\d)/i) || txt.match(/\b([A-Z]{1,3}-\d{2,}(?:-\d+)*)\b/);
+  if(cn) set('caseno', cn[1].trim(), `Case number: ${cn[1].trim()}`);
+  const hangul=[...txt.matchAll(/[가-힣]{2,4}/g)].map(m=>m[0]).filter(w=>!/병원|복지|사회|호적|보육|영아|위탁|기관|사진|편지|발견|여권|이름|출생|입양|번호|서울|부산|대구|인천|광주|대전|울산|경찰|미혼|생모|생부|친모|친부/.test(w));
+  if(hangul.length) set('koname', hangul[0], `Korean word or name: ${hangul[0]}`);
+  const nameEn=txt.match(/korean name\s*[:\-]?\s*([A-Z][a-z]+(?:[\s\-][A-Z][a-z]+){1,2})/i); if(nameEn && !hangul.length) set('koname', nameEn[1], `Korean name: ${nameEn[1]}`);
+  const d=txt.match(/\b((?:19|20)\d{2})[.\-\/년 ]\s?(\d{1,2})[.\-\/월 ]\s?(\d{1,2})일?\b/) || txt.match(/\b(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+((?:19|20)\d{2})\b/i) || txt.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2}),?\s+((?:19|20)\d{2})\b/i);
+  if(d){ const iso=toISO(d); if(iso) set('dob', iso, `Date: ${iso}`); }
+  if(/\b\d{1,2}:\d{2}\b|\d{1,2}시\s?\d{0,2}분?/.test(txt) && /birth|born|출생|태어/i.test(txt)) set('birthtime', (txt.match(/\b\d{1,2}:\d{2}\b/)||[''])[0], 'Time of birth');
+  const lower=txt.toLowerCase(); const cities=[];
+  for(const k in CITY){ if(new RegExp('\\b'+k+'\\b','i').test(lower)) cities.push(k); }
+  for(const ko of new Set(Object.values(CITY))){ if(txt.includes(ko.replace('도',''))) cities.push(ko); }
+  const isFound=/\b(found|foundling|abandoned|left at|police box|police station|doorstep)\b|발견|기아|버려/i.test(txt);
+  if(cities.length){ const c=cities[0]; const label=(CITY[c]?c[0].toUpperCase()+c.slice(1)+` (${CITY[c]})`:c); set(isFound?'found':'birthplace', label, `Place: ${label}`); }
+  if(isFound) set('found', null, 'Found / foundling');
+  if(/hospital|clinic|midwife|병원|의원|산부인과|조산/i.test(txt)) set('hospital', (txt.match(/[A-Z][\w']*(?:\s[A-Z][\w']*)*\s(?:Hospital|Clinic)|[가-힣]+(?:병원|의원|산부인과)/)||[null])[0], 'Hospital or clinic');
+  if(/foster|위탁/i.test(txt)) set('foster', null, 'Foster care');
+  if(/orphanage|children'?s home|baby home|infant home|보육원|영아원|고아원/i.test(txt)) set('orphanage', null, 'Orphanage / home');
+  if(/birth mother|birth father|mother'?s name|father'?s name|생모|생부|친모|친부|친생/i.test(txt)) set('parents', null, 'Birth parent mention');
+  if(/hojuk|family regist|호적|고아호적/i.test(txt)) set('register', null, 'Family register');
+  if(/passport|여권/i.test(txt)) set('passport', null, 'Passport');
+  if(/social history|background report|unwed|unmarried|미혼/i.test(txt)) set('social', null, 'Social history');
+  if(/photo|picture|사진/i.test(txt)) set('photos', null, 'Photos');
+  if(/letter|note from|편지|쪽지/i.test(txt)) set('objects', null, 'Letter or note');
+  if(/23andme|ancestry|myheritage|familytreedna|ftdna|dna test/i.test(txt)) set('dnadone', (txt.match(/23andme|ancestry|myheritage|familytreedna|ftdna/i)||[null])[0], 'DNA test');
+  if(/arriv|escort|flight|airport/i.test(txt)) set('arrival', null, 'Arrival details');
+  return hits;
+}
+const MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function toISO(m){ let y,mo,d;
+  if(/^\d{4}$/.test(m[1])){y=+m[1];mo=+m[2];d=+m[3];}
+  else if(/^\d/.test(m[1])){d=+m[1];mo=MON[m[2].slice(0,3).toLowerCase()];y=+m[3];}
+  else {mo=MON[m[1].slice(0,3).toLowerCase()];d=+m[2];y=+m[3];}
+  if(!(mo>=1&&mo<=12&&d>=1&&d<=31)) return null; return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function koDate(s){ const m=(s||'').match(/((?:19|20)\d{2})\D+(\d{1,2})\D+(\d{1,2})/); return m?`${m[1]}년 ${+m[2]}월 ${+m[3]}일`:null; }
+function particle(word){ const c=word.charCodeAt(word.length-1)-0xAC00; if(c<0||c>11171) return '(으)로'; const j=c%28; return (j===0||j===8)?'로':'으로'; }
+function cityKo(s){ if(!s) return null; const l=s.toLowerCase(); for(const k in CITY){ if(new RegExp('\\b'+k+'\\b').test(l)) return CITY[k]; } const h=s.match(/[가-힣]+/); return h?h[0]:null; }
+
+/* ============================================================ ENGINE */
+function analyse(){
+  const on=id=>!!S.on[id], sit=id=>!!S.sit[id];
+  const checked=ITEMS.filter(i=>on(i.id));
+  const score=Math.min(100,checked.reduce((a,i)=>a+i.w,0));
+  const road=[];
+  const ctry=COUNTRIES.find(c=>c[0]===S.country);
+  if(sit('private')) road.push(['Contact NCRC or G.O.A.\'L about your route','Private and Civil Act adoptions cannot use the standard disclosure request. NCRC is still the place to ask, and G.O.A.\'L can advise. '+lk('goal')]);
+  else {
+    if(!on('agency')) road.push(['Identify your Korean agency','Find the Korean agency behind your foreign one, so NCRC can locate your file. '+lk('goalDir')]);
+    if(!sit('filed')) road.push(['File your Adoption Information Disclosure Request',`Free, online, and it unlocks the DNA route.${on('caseno')?' Put your case number'+(S.det.caseno?` <b>${esc(S.det.caseno)}</b>`:'')+' on the form exactly as printed.':''}${sit('under18')?' Because you are under 18, you need your adoptive parents\' consent.':''} `+lk('disclosure')]);
+    else road.push(['Follow up on your disclosure request','When the answer comes, come back and tick anything new: a time of birth, parents\' ages, a hospital. If birth parents decline consent, G.O.A.\'L suggests asking again after a year. '+lk('goal')]);
+  }
+  const noParentInfo=!on('parents');
+  road.push([ on('found')||noParentInfo ? 'Register your DNA with the Korean police (free)' : 'Keep the police DNA route in mind',
+    (on('found')||noParentInfo ? 'Once NCRC confirms your file has no usable birth-parent information, ask for the genetic-testing certificate and give a sample at a Korean embassy or consulate'+(ctry&&ctry[0]&&ctry[0]!=='KR'&&ctry[0]!=='XX'?` in ${ctry[1]}`:'')+'. Email <a href="mailto:familysearch@ncrc.or.kr">familysearch@ncrc.or.kr</a> to start.'
+      : 'Your papers name birth parents, so NCRC may try consent first. If that leads nowhere, the police DNA route opens.') ]);
+  if(on('dnadone')) road.push(['Upload your raw DNA everywhere',`Download raw data from ${S.det.dnadone?esc(S.det.dnadone):'your test company'} and upload it to FamilyTreeDNA, GEDmatch and MyHeritage. Then join 325KAMRA's project. `+lk('ftdna')]);
+  else road.push(['Get a free 325KAMRA DNA kit','Adoptee-run, mails worldwide, and collects birth-family DNA inside Korea. $10 admin fee plus postage. '+lk('kamra')]);
+  if(on('mixed')) road.push(['Test with a large US-based database too','Mixed-heritage adoptees usually get far more matches there.']);
+  if(on('koname')||on('dob')||on('birthplace')||on('found')||on('photos')) road.push(['Post yourself on the NCRC search boards',`Use your ${[on('koname')&&'Korean name in Hangul',on('dob')&&'date of birth',(on('birthplace')||on('found'))&&'place',on('photos')&&'photo'].filter(Boolean).join(', ')}. Then check the families-searching board for a match. `+lk('boardA')]);
+  road.push(['Register with the Hope Registry','A two-sided registry: adoptees and Korean birth families both sign up. '+lk('hope')]);
+  const place=S.det.found||S.det.birthplace||S.det.hospital||S.det.orphanage;
+  if(on('found')||on('birthplace')||on('hospital')||on('orphanage')) road.push(['Ask G.O.A.\'L about a place-based search',`${place?'Bring <b>'+esc(place)+'</b>. ':''}Places change names and records move; they know how to check. `+lk('goal')]);
+  if(on('objects')) road.push(['Get your letter or item translated safely','Use someone you trust. Keep the original; bring a copy to your file review.']);
+  if(on('register')||on('social')) road.push(['Don\'t take your papers at face value','The Truth and Reconciliation Commission found falsified orphan registers and inaccurate records. If you believe yours were falsified, you can apply. '+lk('trc')]);
+  if(sit('visit')) road.push(['Book your in-person file review now','Reservations open 14–50 days ahead and slots are limited. Stay at KoRoot\'s guesthouse for a gentle landing. '+lk('koroot')]);
+  if(sit('citizen')) road.push(['Check your citizenship status','In the US, Adoptees For Justice campaigns on this. Korean nationality restoration needs NCRC\'s Adoption Verification Certificate. '+lk('a4j')+' · '+lk('dual')]);
+  if(sit('support')) road.push(['Find your people','Adoptee associations exist in most adoptive countries, and KoRoot offers counselling in Seoul. '+lk('ikaa')]);
+
+  // keywords
+  const kws=[];
+  if(S.det.koname){ const h=S.det.koname.match(/[가-힣]+/); kws.push([h?h[0]:S.det.koname, h?'your Korean name':'romanised name: ask for the Hangul']); }
+  if(S.det.dob){ const k=koDate(S.det.dob); if(k) kws.push([k,'date of birth (Korean format)']); }
+  ['birthplace','found','hospital','orphanage'].forEach(id=>{ const c=cityKo(S.det[id]); if(c) kws.push([c,'place in Korean']); });
+  if(S.det.agency){ const a=AGENCIES.find(([re])=>re.test(S.det.agency)); if(a&&a[1]) kws.push([a[1],a[2]]); }
+  if(S.det.caseno) kws.push([S.det.caseno,'case number']);
+  const agencyKnown=S.det.agency&&AGENCIES.some(([re,ko])=>ko&&re.test(S.det.agency));
+  checked.forEach(i=>{ if(i.id==='agency'&&agencyKnown) return; i.kw.forEach(k=>kws.push(k)); });
+  kws.push(['친가족 찾기','birth family search'],['해외입양인','overseas adoptee']);
+  const seen=new Set(); const kwU=kws.filter(([k])=>!seen.has(k)&&seen.add(k));
+  return {checked,score,road,kws:kwU,ctry};
+}
+
+/* ============================================================ RENDER */
+let cTimer=[];
+function consoleLines(lines){
+  cTimer.forEach(clearTimeout); cTimer=[];
+  const el=document.getElementById('console'); el.innerHTML='';
+  lines.forEach((l,i)=>cTimer.push(setTimeout(()=>{el.innerHTML+=(i?'\n':'')+l;},i*140)));
+}
+function run(trigger,quiet){
+  const r=analyse();
+  // meter
+  const ring=document.getElementById('ring'); ring.style.setProperty('--p',r.score);
+  document.getElementById('score').textContent=r.score;
+  const [lv,ls]= r.checked.length===0?['Nothing yet','Every search starts somewhere. Tick what you have.']
+    : r.score<25?['A thin file, for now','Very common, and not your fault. DNA and the search boards were made for exactly this.']
+    : r.score<55?['Some real leads','You have threads to pull. Follow the roadmap in order.']
+    : ['Strong leads','You have more than most. Get your disclosure request in and put these details to work.'];
+  document.getElementById('level').textContent=lv; document.getElementById('levelS').textContent=ls;
+  // roadmap
+  document.getElementById('road').innerHTML=r.road.map(([t,d])=>`<li><b>${t}</b>${d}</li>`).join('');
+  // meanings
+  document.getElementById('means').innerHTML=r.checked.length? r.checked.map(i=>`<div class="mean"><h4>${i.t} <span class="ko muted" style="font-weight:500;font-size:.85rem">· ${i.ko}</span></h4>${S.det[i.id]?`<p><b>You have:</b> ${esc(S.det[i.id])}</p>`:''}<p>${i.m}</p>${i.links.length?`<p style="margin:0">${i.links.map(lk).join(' · ')}</p>`:''}</div>`).join('') : '<p class="empty">Tick an item to see what it means for your search.</p>';
+  // keywords
+  document.getElementById('kws').innerHTML=r.kws.map(([k,en])=>`<button class="kwb" data-k="${esc(k)}" title="${esc(en)}">${esc(k)} <span class="muted" style="font-size:.72rem">${esc(en)}</span></button>`).join('');
+  // console
+  if(!quiet){
+    const it=trigger&&ITEMS.find(i=>i.id===trigger);
+    const lines=[`<span class="c-dim">&gt; analysing ${r.checked.length} item${r.checked.length===1?'':'s'}…</span>`];
+    if(it&&S.on[it.id]) lines.push(`<span class="c-hi">+ ${esc(it.t)}</span> <span class="c-dim">(${it.ko})</span>`);
+    if(S.on.agency) lines.push('<span class="c-ok">✓</span> agency mapped → records now held by NCRC');
+    if(S.on.caseno) lines.push('<span class="c-ok">✓</span> case number → attach to disclosure request');
+    if(S.on.found||!S.on.parents) lines.push('<span class="c-ok">✓</span> police DNA route: likely eligible');
+    if(S.on.parents) lines.push('<span class="c-ok">✓</span> birth-parent lead → consent process applies');
+    if(S.on.koname||S.on.dob) lines.push('<span class="c-ok">✓</span> board search terms generated');
+    lines.push(`<span class="c-dim">&gt; roadmap: ${r.road.length} steps · lead strength ${r.score}/100</span>`);
+    consoleLines(lines);
+  }
+  buildSheet(r);
+}
+
+/* ============================================================ OUTPUTS */
+function koMessage(){
+  const r=analyse(); const c=r.ctry&&r.ctry[2]&&r.ctry[0]!=='KR'?r.ctry[2]:null;
+  const lines=['안녕하세요.', c?`저는 ${c}${particle(c)} 입양된 한국 출신 입양인입니다.`:'저는 해외로 입양된 한국 출신 입양인입니다.','친가족을 찾기 위해 제 입양 기록을 확인하고 싶습니다. 제가 가지고 있는 정보는 다음과 같습니다.',''];
+  r.checked.forEach(i=>{ let v=S.det[i.id]||'있음'; if(i.id==='dob'&&koDate(v)) v=koDate(v); lines.push(`- ${i.ko}: ${v}`); });
+  if(!r.checked.length) lines.push('- (아직 정리 중입니다)');
+  lines.push('','도움을 주시면 정말 감사하겠습니다.','감사합니다.');
+  return lines.join('\n');
+}
+function buildSheet(r){
+  const rows=r.checked.map(i=>`<tr><td>${i.t}</td><td class="ko">${i.ko}</td><td>${esc(S.det[i.id]||'Yes')}</td></tr>`).join('');
+  document.getElementById('sheet').innerHTML=`<h2>My search summary · 나의 친가족 찾기 정보</h2>
+   <p>Prepared with Korean Roots Finder. ${r.ctry&&r.ctry[1]&&r.ctry[0]?'Living in '+r.ctry[1]+'. ':''}Lead strength ${r.score}/100.</p>
+   <table><tr><th>What I have</th><th>한국어</th><th>Details</th></tr>${rows||'<tr><td colspan=3>Nothing ticked yet</td></tr>'}</table>
+   <h3 style="margin-top:18px">Next steps</h3><ol>${r.road.map(([t])=>`<li>${t}</li>`).join('')}</ol>
+   <h3>Korean message</h3><pre style="white-space:pre-wrap;font-family:inherit">${esc(koMessage())}</pre>`;
+}
+
+/* ============================================================ EVENTS */
+buildUI(); sync(); run(null,true);
+document.getElementById('scan').addEventListener('click',()=>{
+  const hits=scanText(document.getElementById('paste').value); sync();
+  document.getElementById('found').innerHTML=hits.length?hits.map(h=>`<span class="chip">${esc(h)}</span>`).join(''):'<span class="chip k">Nothing recognised yet. Try adding a number, a date or a place.</span>';
+  run(null,true);
+  consoleLines(['<span class="c-dim">&gt; scanning text…</span>',...hits.map(h=>`<span class="c-ok">✓</span> ${esc(h)}`),`<span class="c-dim">&gt; ${hits.length} signal${hits.length===1?'':'s'} found · roadmap updated</span>`]);
+  if(window.innerWidth<920) document.getElementById('out').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('example').addEventListener('click',()=>{
+  document.getElementById('paste').value="Holt Children's Services, case no. K-85-1234\nKorean name: 김민지 (Kim Min Ji)\nBorn 1985.03.02 at a clinic in Taegu\nPlaced with a foster mother until departure. Referral photo attached.";
+  document.getElementById('scan').click();
+});
+document.getElementById('clearAll').addEventListener('click',()=>{
+  S.on={};S.det={};S.auto={};S.sit={};S.country='';
+  document.getElementById('paste').value='';document.getElementById('found').innerHTML='';
+  document.querySelectorAll('[data-sit]').forEach(c=>{c.checked=false;document.getElementById('si-'+c.dataset.sit).classList.remove('on');});
+  document.getElementById('country').value='';
+  sync(); run(null,true); consoleLines(['<span class="c-dim">&gt; cleared. Nothing stored.</span>']);
+});
+document.getElementById('kws').addEventListener('click',e=>{const b=e.target.closest('.kwb'); if(b) copyText(b.dataset.k,'Copied: '+b.dataset.k);});
+document.getElementById('copyKo').addEventListener('click',()=>copyText(koMessage(),'Korean message copied'));
+document.getElementById('print').addEventListener('click',()=>window.print());
+</script>
+</body>
+</html>
