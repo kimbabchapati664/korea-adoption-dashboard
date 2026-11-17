@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>About HJ Kim, and how to support this work | Korean Roots Finder</title>
-<meta name="description" content="HJ Kim lives in Seoul and volunteers to help Korean adoptees take the first steps of a birth-family search. Support the work through PayPal or crypto (MetaMask).">
+<meta name="description" content="HJ Kim has volunteered with Korean adoptees since her 20s. After years in Madagascar, Singapore, France and India, she is back in her hometown near Busan and gives her time to adoptees searching for their roots. Support the work through PayPal or crypto.">
 <meta property="og:title" content="About HJ Kim · Korean Roots Finder">
-<meta property="og:description" content="Why a Seoul local started volunteering for Korean adoptees, and how you can support it.">
+<meta property="og:description" content="Whatever your story is, I'm happy to help with my time.">
 <meta property="og:image" content="https://korea-adoption-dashboard.vercel.app/hj-kim.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121212'/%3E%3Ccircle cx='32' cy='26' r='10' fill='%23c5bcf2'/%3E%3Cpath d='M32 36v16M24 46l8 6 8-6' stroke='%2391d8b2' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,18 +21,29 @@
     <div class="about">
       <div>
         <div class="portrait"><img src="hj-kim.jpg" alt="Portrait of HJ Kim"></div>
-        <p class="muted" style="font-size:.85rem;margin-top:12px">HJ Kim (김현정) · Seoul, Korea</p>
+        <p class="muted" style="font-size:.85rem;margin-top:12px">HJ Kim (김현정) · near Busan, Korea</p>
       </div>
       <div>
         <div class="kicker">About me</div>
         <h1 style="font-size:clamp(2.2rem,5vw,3.6rem);margin:12px 0 18px">Hi, I'm HJ Kim.</h1>
-        <p class="quote">"Nobody should need money, or Korean, to ask where they came from."</p>
-        <p class="lede">I live in Seoul and run a small company here called All Things Asia. This site, and the time I give to adoptees, is volunteer work.</p>
-        <p>More than 168,000 Korean children were sent overseas for adoption. Many of them are adults now, coming back with a thin folder of papers in a language they never had the chance to learn, into a system that confuses even Koreans.</p>
-        <p>I speak the language, I can pick up the phone, and I know how the offices here work. For me, reading a document or making a call takes an hour. For someone searching from Minnesota or Stockholm, the same thing can take months, or never happen at all.</p>
-        <p>So I started doing it for free, and I built this site so the first steps are open to everyone, whether or not we ever meet.</p>
-        <div class="btns"><a class="btn btn-p" href="#donate">Support this work</a><a class="btn btn-s" href="https://forms.gle/z9WPkE3ZgyWG4sxg8" target="_blank" rel="noopener">Contact me</a></div>
+        <p class="quote">"Whatever your story is, I'm happy to help with my time."</p>
+        <p class="lede">I was born and grew up in Korea. In my 20s and 30s I had the privilege of living in other countries: Madagascar, Singapore, France, and India in my 30s.</p>
+        <p>I moved back to Korea ten years ago. Recently I moved again, to my hometown near Busan, the place I originally came from and where all my family and my ancestors came from. It is pretty thrilling to come back here and make a new family. I moved back with my German husband.</p>
+        <p>As a Korean, I had a mom and a dad. But I also lived through the kind of life stories that came from how much Korea changed after the Korean War. Each one of us has a story.</p>
+        <p>In my 20s I started volunteering with different NGOs, groups and committees in Korea that helped Korean adoptees look for their birth parents. Back then most of the adoptees I met were my generation, my age. We were all in our 20s, all struggling to find out who we were, with a lot of anger and anxiety.</p>
+        <p>Now, in 2026, many things have changed in the world and in Korea. I'm glad Korea has become a more inclusive country. We have opened up to many people, and I think it is a very good time to find your roots. Whatever your story, whatever information you have, or anything in between, I'm happy to help with my time.</p>
+        <div class="btns"><a class="btn btn-p" href="https://forms.gle/z9WPkE3ZgyWG4sxg8" target="_blank" rel="noopener">Contact me</a><a class="btn btn-s" href="#donate">Support this work</a><a class="btn btn-s" href="https://www.linkedin.com/in/kim-hyun-jung-a357141aa/" target="_blank" rel="noopener">LinkedIn</a></div>
       </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="kicker">My path</div><h2>From Korea, around the world, and home again</h2></div>
+    <div class="grid g4 pastel">
+      <div class="card"><h3>My 20s</h3><p>Volunteering with NGOs, groups and committees in Korea that helped adoptees search for their birth parents. Most of them were my age.</p></div>
+      <div class="card"><h3>Abroad</h3><p>Madagascar, Singapore, France, and India in my 30s. Living in other countries was a privilege I don't take for granted.</p></div>
+      <div class="card"><h3>Back to Korea</h3><p>Ten years ago I moved back to Korea.</p></div>
+      <div class="card"><h3>Home near Busan</h3><p>Now in my hometown, where my family and ancestors came from, making a new family with my German husband.</p></div>
     </div>
   </section>
 
@@ -85,13 +96,23 @@
    evm:    your MetaMask public address, starts with 0x (42 characters)
    ============================================================ */
 const DONATE = {
-  paypal: '',
-  evm: ''
+  paypalClientId: 'BAAtIE9hxkiJ1w9fBF5kLfR2R26uHtRkNYyIhbRk0ZwolMalgzlAiGwzf8N5Foi2pr0gsUcHbnts7i36ns',
+  paypalHostedButtonId: '',   // from PayPal's embed code: paypal.HostedButtons({ hostedButtonId: "..." })
+  paypal: '',                 // optional fallback: a PayPal.me link
+  evm: '0x5C07716d58207f957fB9645582cB81AD84cb18bF'
 };
 
 (function(){
   const pp=document.getElementById('paypalBox'), cb=document.getElementById('cryptoBox');
-  if(/^https:\/\/(www\.)?(paypal\.me|paypal\.com)\//i.test(DONATE.paypal)){
+  if(/^[A-Z0-9]{8,20}$/.test(DONATE.paypalHostedButtonId) && DONATE.paypalClientId){
+    const id=DONATE.paypalHostedButtonId;
+    pp.innerHTML=`<div id="paypal-container-${id}" style="background:#fff;border-radius:16px;padding:14px;max-width:420px"></div>`;
+    const s=document.createElement('script');
+    s.src=`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(DONATE.paypalClientId)}&components=hosted-buttons&disable-funding=venmo&currency=USD`;
+    s.onload=()=>{ try{ paypal.HostedButtons({hostedButtonId:id}).render(`#paypal-container-${id}`); }catch(e){ pp.innerHTML='<div class="soon">PayPal could not load. Please try again later.</div>'; } };
+    s.onerror=()=>{ pp.innerHTML='<div class="soon">PayPal could not load. Please check your connection or ad blocker.</div>'; };
+    document.head.appendChild(s);
+  } else if(/^https:\/\/(www\.)?(paypal\.me|paypal\.com)\//i.test(DONATE.paypal)){
     pp.innerHTML=`<a class="btn btn-p" href="${esc(DONATE.paypal)}" target="_blank" rel="noopener">Donate with PayPal →</a>`;
   } else {
     pp.innerHTML='<div class="soon"><b>Coming soon.</b> The PayPal link is being set up. In the meantime, <a href="https://forms.gle/z9WPkE3ZgyWG4sxg8" target="_blank" rel="noopener">send me a message</a>.</div>';

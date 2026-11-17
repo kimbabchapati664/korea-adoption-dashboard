@@ -23,7 +23,7 @@
     ft.innerHTML = `<div class="in">
       <div>
         <h4>Korean Roots Finder</h4>
-        <p>A free, volunteer-run guide for Korean adoptees beginning a birth-family search. Made in Seoul by <a href="about.html">HJ Kim</a>.</p>
+        <p>A free, volunteer-run guide for Korean adoptees beginning a birth-family search. Made in Korea by <a href="about.html">HJ Kim</a>.</p>
         <p>Independent. Not affiliated with NCRC, the Korean police, any adoption agency or any government body.</p>
       </div>
       <div>
