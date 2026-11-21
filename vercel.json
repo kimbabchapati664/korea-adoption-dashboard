@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    { "source": "/:page(blog|tour|resources|stats|post)", "destination": "https://all-things-asia.vercel.app/:page", "permanent": false },
+    { "source": "/:page(blog|tour|resources|stats|post).html", "destination": "https://all-things-asia.vercel.app/:page", "permanent": false },
+    { "source": "/assets/:path*", "destination": "https://all-things-asia.vercel.app/assets/:path*", "permanent": false },
+    { "source": "/api/:path*", "destination": "https://all-things-asia.vercel.app/api/:path*", "permanent": false }
+  ]
+}
